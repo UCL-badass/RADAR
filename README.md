@@ -68,7 +68,7 @@ This is the small [refactoring example](http://www0.cs.ucl.ac.uk/staff/S.Busari/
 
 ## 2. Plastic card fraud detection system
 
-The [running example](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/fds_report.html) used in the paper to illustrate the language and analysis functions. The problem consists in selecting among alternative design for a fraud detection system so as to minimise financial loss due to fraud and minimise the number of fraud alerts to be investigated manually. The full model and analysis results can be downloaded [here](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/FDM.rdr).
+The [running example](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/fds_report.html) used in the paper to illustrate the language and analysis functions. The problem consists in selecting among alternative designs for a fraud detection system so as to minimise financial loss due to fraud and minimise the number of fraud alerts to be investigated manually. The full model and analysis results can be downloaded [here](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/FDM.rdr).
 
 ## 3. Document sharing security policy
 
