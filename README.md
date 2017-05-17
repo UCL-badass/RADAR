@@ -91,7 +91,7 @@ In the command above, [SytheticModelGenerator.jar](http://www0.cs.ucl.ac.uk/staf
 The RADAR files can be opened and analysed in the tool following the steps outlined above.
 
 
-# Instructions on running the souce code
+# Running the source code
 The tool is implemented in Java as a Maven project, and it uses [ANTLR](http://www.antlr.org/) to generate model parser, generates diagrams in DOT format, and uses [Graphviz ](http://graphviz.org/)  to visualise the diagrams. To continue development on RADAR, follow the instructions below:
 
   - Clone or download the project source code from the GIT repository
