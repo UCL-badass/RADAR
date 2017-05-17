@@ -618,7 +618,7 @@ public class UserInterfaceUtility {
 	}
 	static String addDirectorySlash(String path, char separator){
 		if (path != "" && path.trim().charAt(path.length()-1) != separator){
-			path =path.trim() +"/";
+			path =path.trim() + separator;
 			
 		}
 		return path;
