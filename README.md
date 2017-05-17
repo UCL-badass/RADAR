@@ -96,8 +96,7 @@ The tool is implemented in Java as a Maven project, and it uses [ANTLR](http://w
 
   - Clone or download the project source code from the GIT repository
   - Import the project into your IDE of preference e.g. Eclipse Luna.
-  - Add all the libraries listed below to the project build path.
-  - Build the project  (Maven clean, Maven compile and Maven install) 
+  - Build the project using Maven e.g. using Maven clean, Maven compile and Maven install. 
   - Right click on the file "RADAR_GUI.java" and click "Run AS" to run java application.
   
 The following are the libraries to be added to your project as Maven dependencies. They can be found within the downloaded project in the folder "uk.ac.ucl.cs.lib" :
