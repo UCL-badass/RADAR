@@ -8,7 +8,7 @@ RADAR is a lightweight modelling language and decision analysis tool to support 
   - What parameter uncertainty may deserve additional data collection and analysis before making their decision.
   - What parameter uncertainty does not matter to their decision.
 
-You can find details about RADAR on the [project webpage](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/)
+You can find details about RADAR on the [project webpage](https://ucl-badass.github.io/radar/)
 
 # Papers
 
