@@ -28,7 +28,7 @@ The RADAR tool is available and can be downloaded [here](http://www0.cs.ucl.ac.u
 
 We have also made the [source code](https://github.com/sbusari/RADAR) of the tool available in GitHub. The tool is implemented in Java and uses [ANTLR](http://www.antlr.org/) to generate model parser, generates diagrams in [DOT format](http://www.graphviz.org/Documentation/dotguide.pdf), and uses [Graphviz](http://graphviz.org/) (also available in [browser](http://webgraphviz.com/)) to visualise the diagrams.
 
---->
+
 # How to use RADAR
 
 RADAR is a self-contained jar file. Simply download the file to your computer and double click to launch the application (needs JRE 1.7 or later versions). Once the application is launched successfully, a window appears with three panels as shown in figure 1:
@@ -55,7 +55,8 @@ RADAR also saves the following model outputs in the specified output directory:
 
 To analyse your own model, simply follow the same steps after having edited your model in the tool or using an external text editor.
 
-For any question, email: {saheed.busari.13, e.letier}@ucl.ac.uk
+
+--->
 
 # Examples
 
@@ -91,15 +92,15 @@ The RADAR files can be opened and analysed in the tool following the steps outli
 
 
 # Instructions on running the souce code
-The tool is implemented in Java and uses [ANTLR](http://www.antlr.org/) to generate model parser, generates diagrams in DOT format, and uses [Graphviz ](http://graphviz.org/)  to visualise the diagrams. To continue development on RADAR, follow the instructions below:
+The tool is implemented in Java as a Maven project, and it uses [ANTLR](http://www.antlr.org/) to generate model parser, generates diagrams in DOT format, and uses [Graphviz ](http://graphviz.org/)  to visualise the diagrams. To continue development on RADAR, follow the instructions below:
 
   - Clone or download the project source code from the GIT repository
   - Import the project into your IDE of preference e.g. Eclipse Luna.
   - Add all the libraries listed below to the project build path.
-  - Build the project 
+  - Build the project  (Maven clean, Maven compile and Maven install) 
   - Right click on the file "RADAR_GUI.java" and click "Run AS" to run java application.
   
-The following are the libraries to be added to your project. They can be found within the downloaded project in the folder "uk.ac.ucl.cs.lib" :
+The following are the libraries to be added to your project as Maven dependencies. They can be found within the downloaded project in the folder "uk.ac.ucl.cs.lib" :
   - antlr-4.5.1-complete.jar, which is used to generate model parser. 
   - commons-lang3-3.4.jar, which contains some string manipulating functions
   - commons-math3-3.6.1.jar, which containes some of the maths functions used for statistical and probabilistc analysis.
@@ -112,9 +113,9 @@ The following are the libraries to be added to your project. They can be found w
 
 Radar is an early prototype that we are constantly improving. Our current development goals include:
   - Applying RADAR to additional examples.
-  - Extending the language to support decisions with non-mutually exclusive options.
-  - Various improvements to the user interface: syntax highlighting, better error messages, and fully integrated graphic generation.
+  - Extending the language to support decisions with non-mutually exclusive options, constraints between options of different decisions.
   - Provide fully documented API for use of Radar by external tools.
   - Facilitating generation of decision analysis report by embedding RADAR model fragments and analysis results within markdown documents.
 
+For any question, email: {saheed.busari.13, e.letier}@ucl.ac.uk
 
