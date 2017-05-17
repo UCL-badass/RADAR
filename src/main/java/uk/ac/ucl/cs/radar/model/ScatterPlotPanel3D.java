@@ -163,7 +163,7 @@ public class ScatterPlotPanel3D extends JPanel {
 
 		Chart3D chart =createChart(semanticModel, createDataset(analysisResult));
 		Chart3DPanel chartPanel = new Chart3DPanel(chart) ;
-        chartPanel.setPreferredSize(new Dimension(700, 500));
+        chartPanel.setPreferredSize(new Dimension(700, 450));
         this.add(chartPanel, BorderLayout.CENTER);
         String frameTilte = "Pareto front obtained  for " + semanticModel.getModelName() + " model." ;
         this.setAutoscrolls(true);

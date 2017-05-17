@@ -67,7 +67,7 @@ public class TwoDPanelPlotter extends JPanel {
 			String Ylabel =  semanticModel.getObjectives().get(0).getLabel();
 			
 			final ChartPanel chartPanel = createDemoPanel(chartTitle, populateDataSeries(results), Xlabel,Ylabel);
-	        chartPanel.setPreferredSize(new Dimension(400, 500));
+	        chartPanel.setPreferredSize(new Dimension(400, 450));
 	        chartPanel.setRangeZoomable(true);
 	        this.add(chartPanel, BorderLayout.CENTER);
 	        //this.pack();
