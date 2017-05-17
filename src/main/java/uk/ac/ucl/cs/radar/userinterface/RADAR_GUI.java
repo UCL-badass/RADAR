@@ -1302,6 +1302,12 @@ public class RADAR_GUI implements PropertyChangeListener {
 		if (!analysisComponentExist){
 			tabbedPane.addTab(ConfigSetting.TABANALYSISRESULT, analysisResult);
 		}
+		// If the pareto front of a previous problem is opened, reload the current problem in it.
+		if (UserInterfaceUtility.tabbedComponentExits(ConfigSetting.TABPARETO, tabbedPane)){
+			//displayParetoFront();
+			UserInterfaceUtility.displayParetoFront(result, semanticModel, outPutDirectory,  editModel,  tabbedPane,  chckbxmntmParetoFront );
+		}
+		
 		tabbedPane.setSelectedComponent(console);
 	}
 	void resizeGraphOnPanel(String graphType, ImageIcon imageIcon, ImageLabel imageLabel, String resizeType){

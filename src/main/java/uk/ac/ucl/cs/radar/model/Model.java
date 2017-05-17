@@ -420,7 +420,7 @@ public class Model implements ModelVisitorElement {
 				}
 			}
 			if (exist == false){
-				throw new ModelException (""+ "Specified objective name "+ objectiveName + " is not an optimisation objective in the model."); 
+				throw new ModelException (""+ "Specified objective name "+ objectiveName + " is not an optimisation objective in the model. \nHint: check the  information value objective and variable subgraph specified in the 'Analysis Settings' of the 'Settings' tab."); 
 			}
 		}
 	}

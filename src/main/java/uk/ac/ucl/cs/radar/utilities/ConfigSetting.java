@@ -24,9 +24,9 @@ public class ConfigSetting {
 	
 	public static String INFOVALUESUBGRAPHOBJECTIVE_CBA = "ENB"; 
 	public static String INFOVALUESUBGRAPHOBJECTIVE_FDM = "FraudDetectionBenefit"; 
-	public static String INFOVALUESUBGRAPHOBJECTIVE_BSPDM = "ExpectedUtility"; 
-	public static String INFOVALUESUBGRAPHOBJECTIVE_SAS = "ExpectedCostOfDisclosures"; 
-	public static String INFOVALUESUBGRAPHOBJECTIVE_ECM = "ExpectedCostOfDisclosures"; 
+	public static String INFOVALUESUBGRAPHOBJECTIVE_BSPDM = "ExpectedCostOfDisclosures"; 
+	public static String INFOVALUESUBGRAPHOBJECTIVE_SAS = "ENB"; 
+	public static String INFOVALUESUBGRAPHOBJECTIVE_ECM = "ExpectedUtility"; 
 	// Model based Configs
 	public static String ECM ="ECS";
 	public static String SAS ="SAS";

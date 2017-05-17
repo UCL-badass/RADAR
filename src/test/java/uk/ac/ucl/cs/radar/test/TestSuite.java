@@ -69,6 +69,7 @@ public class TestSuite {
 	public void tearDown() throws Exception {
 		
 	}
+	
 	@Test
 	public void semanticModelNotNull() {
 		
