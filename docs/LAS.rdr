@@ -1,0 +1,92 @@
+Model AmbulanceServiceModel;
+
+Objective Min Risk = Pr (ResponseTime <= 14*60);
+
+Objective Max  ExpectedBenefit = EV (Benefit);
+
+Benefit = Revenue - Cost;
+
+Revenue =normalCI(100000, 200000);
+
+//Modelling Response Time
+
+ResponseTime = AmbulanceMobilisationTime + MobilisedAmbulanceTravelTime + MobilisedAmbulanceDelay;
+
+AmbulanceMobilisationTime = IncidentCallTakingTime + AmbulanceAllocationTime + MobilisationCommunicationTime;
+
+IncidentCallTakingTime =  decision ("Incident Form Encoding Method"){
+	"Current Paper-Based" : exponential (60);
+	"Computer Based"	: exponential (40);
+	"Automated Call Location" : exponential (45);
+	"Computer-Based and Automated Call Location": exponential (30);
+}
+
+AmbulanceAllocationTime =  decision ("Ambulance Allocation Method"){
+	"Current Paper-Based" : exponential (60);
+	"Interactive Allocation"	: exponential (20);
+	"Fully Automated Allocation" : exponential (5);
+}
+
+MobilisationCommunicationTime = decision ("Mobilisation Communication Method"){
+	"Current Radio-Based" : triangular (45, 60, 90);
+	"MDT-System A"	: triangular (20, 30, 40);
+	"MDT-System B"	: triangular (10, 15, 20);
+}
+
+MobilisedAmbulanceTravelTime =  MobilisedAmbulanceDistance/MobilisedAmbulanceAverageSpreed;
+
+MobilisedAmbulanceDistance =  MobilisedAmbulanceDistanceFromLocation +  MobilisedAmbulanceLocationErrorMargin;
+
+MobilisedAmbulanceDistanceFromLocation = triangular(10000, 50000, 100000);
+
+MobilisedAmbulanceLocationErrorMargin = decision ("Ambulance  Location Method"){
+	"Current Radio and Paper-Based" : normal (60,120);
+	"Automated Vehicle Location A" : normal (45,60);
+	"Automated Vehicle Location B" : normal (20, 60);
+}
+
+MobilisedAmbulanceAverageSpreed = triangular (30, 50, 70);
+
+MobilisedAmbulanceDelay = normalCI(0, 120);
+// Modelling the cost
+
+Cost = AmbulanceMobilisationCost +  CostOfAmbulance;
+
+CostOfAmbulance =  (NbrAmbulances - CurrentNbrOfAmbulance) * UnitCost + AnnualMaintenanceCost;
+
+CurrentNbrOfAmbulance =  deterministic (100);
+
+UnitCost = triangular (5000, 7000, 10000);
+
+NbrAmbulances = decision ("Additional Ambulance"){
+	"Current_100_Amb" : deterministic(100);
+	"120_Amb" : deterministic(120);
+	"140_Amb" : deterministic(140);
+	"160_Amb" : deterministic(160);
+	"180_Amb" : deterministic(180);
+	"200_Amb" : deterministic(200);
+}
+
+AnnualMaintenanceCost = decision ("Additional Ambulance"){
+	"Current_100_Amb" : triangular (5000, 7000, 10000);
+	"120_Amb" : triangular (1000, 1500, 2000);
+	"140_Amb" : triangular (1500, 2000, 2500);
+	"160_Amb" : triangular (2000, 2500, 3000);
+	"180_Amb" : triangular (2500, 3000, 3500);
+	"200_Amb" : triangular (3000, 3500, 4000);
+}
+
+AmbulanceMobilisationCost = CostOfIncidentFormEncoding + CostOfLocatingAmbulance;
+
+CostOfIncidentFormEncoding =  decision ("Incident Form Encoding Method"){
+	"Current Paper-Based" : triangular(150,200,250);
+	"Computer Based"	: triangular(100, 150, 200);
+	"Automated Call Location" : triangular (50,100,120); 
+	"Computer-Based and Automated Call Location": triangular (10, 50, 100);
+}
+
+CostOfLocatingAmbulance = decision ("Ambulance  Location Method"){
+	"Current Radio and Paper-Based" : triangular (400, 500, 600);
+	"Automated Vehicle Location A"	: triangular (300, 400, 500 );
+	"Automated Vehicle Location B"	: triangular (200, 300, 400);
+}

@@ -1,0 +1,617 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+*{margin:0;padding:0;}
+body {
+	font:13.34px helvetica,arial,freesans,clean,sans-serif;
+	color:black;
+	line-height:1.4em;
+	background-color: #F8F8F8;
+	padding: 0.7em;
+}
+p {
+	margin:1em 0;
+	line-height:1.5em;
+	align:justify
+}
+table {
+	font-size:inherit;
+	font:100%;
+	margin:1em;
+}
+.container {
+    display:inline-block;
+}
+table th{border-bottom:1px solid #bbb;padding:.2em 1em;}
+table td{border-bottom:1px solid #ddd;padding:.2em 1em;}
+input[type=text],input[type=password],input[type=image],textarea{font:99% helvetica,arial,freesans,sans-serif;}
+select,option{padding:0 .25em;}
+optgroup{margin-top:.5em;}
+pre,code{font:12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+pre {
+	margin:1em 0;
+	font-size:12px;
+	background-color:#eee;
+	border:1px solid #ddd;
+	padding:5px;
+	line-height:1.5em;
+	color:#444;
+	overflow:auto;
+	-webkit-box-shadow:rgba(0,0,0,0.07) 0 1px 2px inset;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;border-radius:3px;
+}
+pre code {
+	padding:0;
+	font-size:12px;
+	background-color:#eee;
+	border:none;
+}
+code {
+	font-size:12px;
+	background-color:#f8f8ff;
+	color:#444;
+	padding:0 .2em;
+	border:1px solid #dedede;
+}
+
+img{border:0;max-width:100%;}
+abbr{border-bottom:none;}
+a{color:#4183c4;text-decoration:none;}
+a:hover{text-decoration:underline;}
+a code,a:link code,a:visited code{color:#4183c4;}
+h2,h3{margin:1em 0;}
+h1,h2,h3,h4,h5,h6{border:0;}
+h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
+h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
+h2{font-size:150%;margin-top:1em}
+h3{margin-top:1em;}
+hr{border:1px solid #ddd;}
+ul{margin:1em 0 1em 2em;}
+ol{margin:1em 0 1em 2em;}
+ul li,ol li{margin-top:.5em;margin-bottom:.5em;}
+ul ul,ul ol,ol ol,ol ul{margin-top:0;margin-bottom:0;}
+blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555;}
+dt{font-weight:bold;margin-left:1em;}
+dd{margin-left:2em;margin-bottom:1em;}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+</style>
+<title>RADAR</title>
+
+</head>
+<body id="preview">
+<h1><a id="Analysis_of_Design_Decisions_for_Ambulance_Management_Systems_0"></a>Analysis of Design Decisions for Ambulance Management Systems</h1>
+<p><em>Saheed. A. Busari</em></p>
+<p>RADAR is a lightweight modelling language and tool for analysing software requirements and architecture decisions (Busari and Letier, 2017). This report presents an application of RADAR to the analysis of ambulance management systems.</p>
+<p>Our analysis is motivated by and based on an enquiry report about the London ambulance system failure (Finkelstein et al., 1996) and a goal model developed for the London Ambulance Service (Letier et al., 2004; Letier et al., 2011).</p>
+<h2><a id="Problem_Description_8"></a>Problem Description</h2>
+<p>The Ambulance Management System (AMS)  deploys personnels (i.e. the ambulance crew) to an emergency location where there is an accident (Letier et al., 2011). Typically, the ambulance crew is supposed to arrive at the incident location within 14 minutes from when an incident was reported.</p>
+<p>Design decisions for the ambulance management systems include:</p>
+<ul>
+<li>
+<p>the <strong>incident form encoding method</strong> for encoding details about the calls, from the public, that reports an emergency. The incident encoding method can be the current paper-based method, or computer-based method, or the use of automated encoding using call location mechanism, or a combination of the computer-based method with automated call location method.</p>
+</li>
+<li>
+<p>the <strong>ambulance location method</strong> to locate an idle ambulance to be deployed to incident location. The ambulance location method can be <em> the current radio and paper-based method</em>, or the use of an <em>automated vehicle location method</em>.</p>
+</li>
+<li>
+<p>the <strong>ambulance allocation method</strong> for dispatching the nearest ambulances to an incident location. This method can be the <em>current paper-based allocation method </em>, or an interactive allocation method or a fully automated allocation method. </p>
+</li>
+<li>
+<p>the <strong>mobilisation communication method</strong> to facilitate communication of the ambulance crew and the station the incident was reported. This method can either use a radio or mobile data terminal for communication.</p>
+</li>
+<li>
+<p>
+the <strong>number of deployed ambulances in the city</strong>. There are 100 ambulances currently deployed but this number can be either be 120, 140, 160, 180 and 200.</strong>
+</ul>
+<p>These design decisions (shown below) have impacts on the crew's response time to an incident and the cost-effectiveness of the ambulance management system.    </p>
+<div class="container">
+	<div style="float:right">
+        	 <a href ="AMSdgraph.jpeg"><img src="AMSdgraph.jpeg"></a>
+	<p align ="center">Design Decisions</p>
+    </div>
+</div>
+
+<p>Automating all or parts of the ambulance management system will improve the performance of the system (e.g. ambulance response time). However, there is uncertainty about the cost and benefit of automation.</p>
+
+<h2><a id="Modelling_the_Optimisation_Objectives_27"></a>Modelling the Optimisation Objectives</h2>
+<p>Two key concerns of an ambulance management system are to minimise the response time for an ambulance to intervene an incident and to minimise the total costs, which comprises the cost of incident encoding, cost of mobilising ambulances, cost of locating and allocating ambulances.</p>
+
+<p>The first object of minimising ambulance response time is equivalent to maximising the benefits of using ambulance management system, where the benefits are defined as the difference between the revenue and the total cost:</p>
+<pre><code>Objective Max ExpectedNetBenefit= EV(Benefit);
+
+Benefit = Revenue - Cost;
+
+Revenue = normalCI(100000, 200000);
+</code></pre>
+
+<p>This objective formulation as a maximisation of expected benefits instead of minimisation of expected loss is more convenient for RADAR's information value analysis.</p>
+
+<p>We model the second objective as minimising the risk defined here as the probability that the ambulance response time exceeds 14 minutes (14*60 in seconds) of the reported incident:</p>
+
+<pre><code>Objective Min Risk = Pr(ResponseTime > 14*60);
+</code></pre>
+
+<p> The 14 minutes is a UK Government standard (Letier et al. 2004, 2011).</p>
+
+<h2><a id="Modelling_Financial_Loss_51"></a>Modelling Response Time</h2>
+
+
+<p>The ambulance RepsonseTime is the sum of the time taken to mobilise the ambulance, the travel time of the ambulance and possibly the delay an ambulace faced during travel.</p>
+<pre><code>ResponseTime = AmbulanceMobilisationTime + MobilisedAmbulanceTravelTime + MobilisedAmbulanceDelay;
+</code></pre>
+
+<p> The AmbulanceMobilisationTime is the sum of the incident call taking time, ambulance allocation time and the mobilisation communication time</p>
+<pre><code>AmbulanceMobilisationTime = IncidentCallTakingTime + AmbulanceAllocationTime + MobilisationCommunicationTime;
+</code></pre>
+
+<p>The IncidentCallTakingTime depends on the <em>incident form encoding mehod</em> used; If the current paper-based method is used, then the call taking time follows an exponential distribution with a mean of 60 seconds; If the conputer-based method is used, then 
+the call taking time has an exponenttial distribution with mean time of 40 seconds; if the automated call location method is selected, then the call taking time has exponential distribution with a mean value of 45 seconds; and if the computer-based and automated 
+call location method is used, then the call taking time follows an exponential distribution with a mean time of 30 seconds. </p>
+
+<pre><code>IncidentCallTakingTime = decision(&quot;Incident Form Encoding Method&quot;){
+    &quot;Current Paper-Based&quot;:exponential(60);
+    &quot;Computer Based&quot;:exponential(40);
+    &quot;Automated Call Location&quot;:exponential(45);
+    &quot;Computer-Based and Automated Call Location&quot;:exponential(30);
+}
+</code></pre>
+
+<p> The Ambulance Allocation Time depends on the <em>ambulance allocation method</em>; If the current paper-based method is used, then the ambulance allocation time follows an exponential distribution with a mean of 60 seconds; If the interactive allocation method is used, then 
+the allocation time has an exponenttial distribution with mean time of 20 seconds; if the allocarion is fully automated automated, then the allocation time has exponential distribution with a mean value of 5 seconds.  </p>
+
+<pre><code>AmbulanceAllocationTime = decision(&quot;Ambulance Allocation Method&quot;){
+    &quot;Current Paper-Based&quot;:exponential(60);
+    &quot;Interactive Allocation&quot;:exponential(20);
+    &quot;Fully Automated Allocation&quot;:exponential(5);
+}
+</code></pre>
+
+<p> The Mobilisation Communication Time depends on the <em>mobilisation communication method</em>; If the current radio-based method is used, then the mobilisation communication time follows a triangular distribution with a lower and upper bounds of 45 and 90 seconds respectively, and a most likely time of 60 seconds; If a mobile data terminal system of a specific model type A is used, then 
+the allocation time has a triangualar distribution with a lower and upper bounds of 20 and 40 seconds respectively, and a most likely time of 30 seconds; if a different mobile data terminal system of another model type B is used, then the mobilisation communication time has a triangular distribution with a lower and upper bounds of 10 and 20 seconds respectively, and a most likely time of 15 seconds.  </p>
+
+<pre><code>AmbulanceAllocationTime = decision(&quot;Mobilisation Communication Method&quot;){
+    &quot;Current Radio-Based&quot;:triangular(45, 60, 90);
+    &quot;MDT-System A&quot;:triangular(20, 30, 40);
+    &quot;MDT-System B&quot;:triangular(10, 15, 20);
+}
+</code></pre>
+
+<p>The Mobilisation Ambulance Travel Time is the ratio of the distance the mobilised ambulance has to travel to the average mobilised ambulance speed. </p>
+<pre><code>MobilisedAmbulanceTravelTime = MobilisedAmbulanceDistance/ MobilisedAmbulanceAverageSpreed;
+</code></pre>
+<p>The mobilised ambulance distance is the sum of the mobilised ambulance distance from the incident location  and an error margin when locating the ambulance.</p>
+<pre><code>MobilisedAmbulanceDistance = MobilisedAmbulanceDistanceFromLocation +  MobilisedAmbulanceLocationErrorMargin;
+</code></pre>
+<p>Since ambulances can be at different location, we assume the mobilised ambulance to be within some distance from  the incident location. Hence we say the mobilised amabualce distance from location follows a normal distribution with confidence interval between 10000km and 100000km. </p>
+<pre><code>MobilisedAmbulanceDistanceFromLocation = normalCI(10000,100000);
+</code></pre>
+<p>The mobilisation ambulance location error margin depends on the ambulance location method; if the current radio and paper-based method is used, then the error margin follows a normal distribution with a mean of 60km and standard deviation of 120km; if the automated vehicle location method of model type A is used, then 
+error margin has a normal distribution with a mean and standard deviation of 45km and 60km respectively; if a different automated vehicle location of model type B is used, then the error margin has a normal distribution with a mean  and standard deviation of 20km and 60km respectively.  </p>
+<pre><code>MobilisedAmbulanceLocationErrorMargin = decision(&quot;Ambulance  Location Method&quot;){
+    &quot;Current Radio and Paper-Based&quot;:normal(60, 120);
+    &quot;Automated Vehicle Location A&quot;:normal(45, 60);
+    &quot;Automated Vehicle Location B&quot;:normal(20, 60);
+}
+</code></pre>
+<pre><code>MobilisedAmbulanceAverageSpreed = triangular(30, 50, 70);
+MobilisedAmbulanceDelay = normalCI(0, 120);
+</code></pre>
+
+
+<h2><a id="Modelling_Investigation_Load_173"></a>Modelling The Cost</h2>
+<p>The cost is the sum of the ambualance mobilisation cost and the cost of ambulances:</p>
+<pre><code>Cost = AmbulanceMobilisationCost + CostOfAmbulance;
+</code></pre>
+<pre><code>CostOfAmbulance = (NbrAmbulances - CurrentNbrOfAmbulance) * UnitCost + AnnualMaintenanceCost;
+CurrentNbrOfAmbulance =  deterministic (100);
+UnitCost = triangular (5000, 7000, 10000);
+</code></pre>
+
+
+<p>The number of ambulances depends on the whether additional amabulance are deployed. The number of ambulances currently deployed is 100.</p>
+<pre><code>NbrAmbulances = decision(&quot;Additional Ambulance&quot;){
+    &quot;Current_100_Amb&quot; : deterministic(100);
+    &quot;120_Amb&quot; : deterministic(120);
+    &quot;140_Amb&quot; : deterministic(140);
+    &quot;160_Amb&quot; : deterministic(160);
+    &quot;180_Amb&quot; : deterministic(180);
+    &quot;200_Amb&quot; : deterministic(200);
+}   
+</code></pre>
+<pre><code>AnnualMaintenanceCost = decision(&quot;Additional Ambulance&quot;){
+    &quot;Current_100_Amb&quot; :triangular (5000, 7000, 10000);
+    &quot;120_Amb&quot; : triangular(1000, 1500, 2000);
+    &quot;140_Amb&quot; : triangular(1500, 2000, 2500);
+    &quot;160_Amb&quot; : triangular(2000, 2500, 3000);
+    &quot;180_Amb&quot; : triangular(2500, 3000, 3500);
+    &quot;200_Amb&quot; : triangular(3000, 3500, 4000);
+}   
+</code></pre>
+<p>The ambulance mobilisation cost is the sum of the cost of incodent form encoding and the cost of locating an idle ambulance:</p>
+<pre><code>AmbulanceMobilisationCost = CostOfIncidentFormEncoding + CostOfLocatingAmbulance;
+</code></pre>
+
+<pre><code>CostOfIncidentFormEncoding = decision(&quot;Incident Form Encoding Method&quot;){
+    &quot;Current Paper-Based&quot;:triangular(150,200,250);
+    &quot;Computer Based&quot;:triangular(100, 150, 200);
+    &quot;Automated Call Location&quot;:triangular(50,100,120);
+    &quot;Computer-Based and Automated Call Location&quot;:triangular(10, 50, 100);
+}
+</code></pre>
+
+<pre><code>CostOfLocatingAmbulance = decision(&quot;Ambulance  Location Method&quot;){
+    &quot;Current Radio and Paper-Based&quot;: triangular (400, 500, 600);
+    &quot;Automated Vehicle Location A&quot;:triangular (300, 400, 500 );
+    &quot;Automated Vehicle Location B&quot;: triangular (200, 300, 400); 
+}
+</code></pre>
+
+<p>The AND/OR refinement graph for the response time model and the cost model looks like this:</p>
+<div class="container">
+	<div style="float:right">
+        	 <a href ="AMSvgraph.jpeg"><img src="AMSvgraph.jpeg"></a>
+	<p align ="center">And/Or refinement graph for the response time  and cost</p>
+    </div>
+</div>
+
+
+<h2><a id="Analysis_Results_246"></a>Analysis Results</h2>
+<h3><a id="Optimisation_Analysis_248"></a>Optimisation Analysis</h3>
+<p>Here is a summary of the modelling and analysis information: </p>
+<table class="table table-bordered table-hover table-condensed" align ="center">
+<tbody><tr><td>Objective </td>
+<td><strong>Max</strong>ExpectedNetBenefit</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Objective </td>
+<td><strong>Min</strong>Risk</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>SolutionSpace </td>
+<td>648</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Minimal SolutionSet </td>
+<td>648</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Shortlisted </td>
+<td>5</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Nbr. Variables </td>
+<td>22</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Nbr. Parameters </td>
+<td>31</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Nbr. Decisions </td>
+<td>5</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr><td>Runtime(s) </td>
+<td>0</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody></table>
+
+
+
+<p>The model analysis generates the following shortlist of Pareto-optimal solutions:</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>ID</th>
+<th>Incident Form Encoding Method</th>
+<th>Ambulance Allocation Method</th>
+<th>Mobilisation Communication Method</th>
+<th>Ambulance  Location Method</th>
+<th>Additional Ambulance</th>
+<th>Risk</th>
+<th>ExpectedNetBenfit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Automated Call Location</td>
+<td>Current Paper-Based</td>
+<td>Current Radio-Based</td>
+<td>Automated Vehicle Location B</td>
+<td>Current_100_Amb</td>
+<td>0.13</td>
+<td>142611.97</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Computer-Based and Automated Call Location</td>
+<td>Current Paper-Based</td>
+<td>Current Radio-Based</td>
+<td>Automated Vehicle Location B</td>
+<td>Current_100_Amb</td>
+<td>0.13</td>
+<td>142648.85</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Current Paper-Based</td>
+<td>Current Paper-Based</td>
+<td>Current Radio-Based</td>
+<td>Current Radio and Paper-Based</td>
+<td>Current_100_Amb</td>
+<td>0.12</td>
+<td>142302.11</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Current Paper-Based</td>
+<td>Current Paper-Based</td>
+<td>Current Radio-Based</td>
+<td>Automated Vehicle Location A</td>
+<td>Current_100_Amb</td>
+<td>0.12</td>
+<td>142402.35</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Current Paper-Based</td>
+<td>Current Paper-Based</td>
+<td>Current Radio-Based</td>
+<td>Automated Vehicle Location B</td>
+<td>Current_100_Amb</td>
+<td>0.12</td>
+<td>142501.89</td>
+</tr>
+</tbody>
+</table>
+<!--<p><img src="FDM.png" alt="Figure 4: fraud detection model pareto front">Figure 4: Fraud detection model pareto front</p>-->
+<div class="container">
+	<div style="float:right">
+        	 <a href ="AMS.png"><img src="AMS.png"></a>
+	<p align ="center">Figure 4: Ambulance management system model pareto front</p>
+    </div>
+</div>
+<p>These results show that all shortlisted solutions include the paper-based option, radio-based option and the option to maintain the number of ambulances at 100. This implies that, in our model, the paper-based option outperforms the interactive and fully automated options of the ambulance allocation method. Also, the radio-based option outperforms 
+the MDT-system of the ambulance mobilisation method. However, given that these two options are selected, the optimal solutions consist of all possible combinations of incident encoding methods  and ambulance allocation methods; each com
+ processing on both objectives.</p>
+<p>But once these two options are selected, the shortlist includes all possible combinations of fraud detection methods and alert thresholds; each combination representing a different tradeoff between maximising expected net benefit and minimising risk.</p>
+<p>To visualise such tradeoffs, RADAR generates the graph in Fig. 4 plotting the objective values for the shortlised solutions (shown squares at the top of the graph) and all other non shortlisted ones (shown as circles).</p>
+
+<h3><a id=" Information_Value_Analysis_248"></a> Information Value Analysis</h3>
+<p>Analysing information value gives the following results:</p>
+<p>EVTPI = 0</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<td>Objective</td>
+<td>ExpectedNetBenefit</td>
+</tr>
+<tr>
+<td>EVTPI</td>
+<td>0</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td>Parameter</td>
+<td>EVPPI</td>
+</tr>
+<tr>
+<td>Revenue</td>
+<td>0</td>
+</tr>
+<tr>
+<td>IncidentCallTakingTime[Current Paper-Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>IncidentCallTakingTime[Computer Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>IncidentCallTakingTime[Automated Call Location]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>IncidentCallTakingTime[Computer-Based and Automated Call Location]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AmbulanceAllocationTime[Current Paper-Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AmbulanceAllocationTime[Interactive Allocation]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AmbulanceAllocationTime[Fully Automated Allocation]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisationCommunicationTime[Current Radio-Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisationCommunicationTime[MDT-System A]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisationCommunicationTime[MDT-System B]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisedAmbulanceDistanceFromLocation</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisedAmbulanceLocationErrorMargin[Current Radio and Paper-Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisedAmbulanceLocationErrorMargin[Automated Vehicle Location A]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisedAmbulanceLocationErrorMargin[Automated Vehicle Location B]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisedAmbulanceAverageSpreed</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MobilisedAmbulanceDelay</td>
+<td>0</td>
+</tr>
+<tr>
+<td>UnitCost</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AnnualMaintenanceCost[Current_100_Amb]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AnnualMaintenanceCost[120_Amb]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AnnualMaintenanceCost[140_Amb]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AnnualMaintenanceCost[160_Amb]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AnnualMaintenanceCost[180_Amb]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>AnnualMaintenanceCost[200_Amb]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfIncidentFormEncoding[Current Paper-Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfIncidentFormEncoding[Computer Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfIncidentFormEncoding[Automated Call Location]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfIncidentFormEncoding[Computer-Based and Automated Call Location]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfLocatingAmbulance[Current Radio and Paper-Based]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfLocatingAmbulance[Automated Vehicle Location A]</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CostOfLocatingAmbulance[Automated Vehicle Location B]</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>The results show that the information value of all model parameters is very low.</p>
+<h3>References</h3>
+<ol>
+<li>
+<p>Saheed A. Busari and Emmanuel Letier, &quot;<a href="radar_icse17">RADAR: A lightweight tool for requirements and architecture decision analysis</a>,&quot; in International Conference on Software Engineering (ICSE), 2017</p>
+</li>
+<li>
+<p> A. Finkelstein and J. Dowell, "A comedy of errors: the London Ambulance Service case study," <em>International Workshop on Software Specification and Design (IWSSD)</em>, 1996, pp. 2-4.</p>
+</li>
+<li>
+<p>A. van Lamsweerde and E. Letier, "Handling Obstacles in Goal-Oriented Requirements Engineering," <em>IEEE Transactions on Software Engineering</em>, vol. 26, no. 10, pp. 978–1005, Oct. 2000.</p>
+</li>
+<li>
+<p>W. Heaven and E. Letier, "Simulating and optimising design decisions in quantitative goal models," <em>19th IEEE International Requirements
+Engineering Conference (RE 2011) </em>, IEEE, 2011, pp. 79–88.</p>
+</li>
+</ol>
+
+</body></html></body></html>
