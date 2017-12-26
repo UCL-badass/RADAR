@@ -20,7 +20,7 @@ package uk.ac.ucl.cs.radar.model;
 	 *@param visitor model visitor
 	 */
 	public void accept(ModelVisitor visitor, Model m) {
-		expression.accept(visitor,m);
+		if(expression != null) expression.accept(visitor,m); //added the if condition cos of the implicit third objectve.
 		visitor.visit(this);
 	}
 	abstract double evaluate (Solution s, QualityVariable var);

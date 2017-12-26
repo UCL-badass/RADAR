@@ -6,8 +6,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.abego.treelayout.internal.util.java.lang.string.StringUtil;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.commons.lang3.StringUtils;
 
+import uk.ac.ucl.cs.radar.model.Constraint;
+import uk.ac.ucl.cs.radar.model.ConstraintArgument;
+import uk.ac.ucl.cs.radar.model.DecisionType;
 import uk.ac.ucl.cs.radar.model.Decision;
 import uk.ac.ucl.cs.radar.model.Model;
 import uk.ac.ucl.cs.radar.model.ModelConstructor;
@@ -50,9 +55,21 @@ public class Visitor extends ModelBaseVisitor<Value> {
 	 */
 	Map<String, Objective> obj_list;
 	/**
+	 * Stores all the constraints
+	 */
+	List<Constraint> constraint_list;
+	/**
+	 * Stores all the constraints argument list
+	 */
+	List<ConstraintArgument> constraintArgument_list;
+	/**
 	 * Stores all the decisions in the model
 	 */
 	Map<String, Decision> decision_list;
+	/**
+	 * Stores all the decisions and theie types
+	 */
+	Map<Decision, DecisionType> decision_types;
 	/**
 	 * A variable that represents an ANDRef, but only has a name.
 	 */
@@ -85,6 +102,11 @@ public class Visitor extends ModelBaseVisitor<Value> {
 	 * An instance of a model constructor class used to construct a semantic model from the AST
 	 */
 	ModelConstructor modelConstructor;
+	boolean iSXor;
+	String OROpetationMode;
+	int mutuallyExclusiveCount;
+	int nonMutuallyExclusiveCount;
+	DecisionType decisionType;
 	
 	public Visitor(int nbr_sim,  String infoValueObj,String subGraphObj){
 		nbr_simulation =nbr_sim;
@@ -104,6 +126,11 @@ public class Visitor extends ModelBaseVisitor<Value> {
 		decision_list = new LinkedHashMap<String,Decision>();
 		obj_definitions = new LinkedHashMap<String, Value> ();
 		semanticModel = modelConstructor.createNewModel();
+		constraint_list = new ArrayList<Constraint>();
+		constraintArgument_list = new ArrayList<ConstraintArgument>();
+		decision_types = new LinkedHashMap<Decision, DecisionType>();
+		mutuallyExclusiveCount =0;
+		nonMutuallyExclusiveCount=0;
 		if (ctx.model_element() != null && ctx.model_element().size() > 0 ){
 			for (Model_elementContext modelElementContext : ctx.model_element()){
 				visit (modelElementContext);
@@ -111,8 +138,14 @@ public class Visitor extends ModelBaseVisitor<Value> {
 		}else{
 			throw new RuntimeException ("Model cannot be empty.");
 		}
-		// need objective definition to get the quality variable an objective refers to
 		
+		
+		// need objective definition to get the quality variable an objective refers to
+		modelConstructor.addModelConstraint(semanticModel, constraint_list);
+		modelConstructor.addProblemType (semanticModel,  mutuallyExclusiveCount,  nonMutuallyExclusiveCount);
+		modelConstructor.addConstraintObjective(constraint_list, obj_list, obj_definitions);
+		
+		modelConstructor.checkXORDecisionNotConflictingXORConstraint(constraint_list,decision_list);
 		modelConstructor.addObjectivesToModel(semanticModel, obj_definitions, obj_list,qv_list,infoValueObjective,subGraphObjective);
 		modelConstructor.addQualityVariablesToModel(semanticModel, qv_list );
 		modelConstructor.addDecisionsToModel(semanticModel,decision_list);
@@ -156,7 +189,39 @@ public class Visitor extends ModelBaseVisitor<Value> {
 		obj_list.put(obj_name, obj);
 		return new Value(obj);
 	}
-	
+	@Override 
+	public Value visitModelConstraint(ModelParser.ModelConstraintContext ctx) {
+		
+		if (ctx.constraint_decl() != null && ctx.constraint_decl().size() > 0){
+			for (ModelParser.Constraint_declContext contraint_decl_ctx: ctx.constraint_decl()){
+				visit(contraint_decl_ctx);
+				Constraint consraint= modelConstructor.createNewConstraint(contraint_decl_ctx.constraint.getText(), constraintArgument_list.get(0), constraintArgument_list.get(1));
+				constraint_list.add(consraint);
+				constraintArgument_list = new ArrayList<ConstraintArgument>();
+			}
+		}
+		return new Value(null);
+	}
+	@Override 
+	public Value visitConstraint_decl(ModelParser.Constraint_declContext ctx) { 
+		
+		//constraintArgument_list
+		if (ctx.constraint_argument() != null && ctx.constraint_argument().size() > 0){
+			for (ModelParser.Constraint_argumentContext constraintArgContext : ctx.constraint_argument()){
+				visit(constraintArgContext);
+			}
+			
+		}
+		return new Value(null); 
+	}
+	@Override 
+	public Value visitConstraint_argument(ModelParser.Constraint_argumentContext ctx) { 
+		String decision = ctx.decision.getText().replace("\"", "").trim();;
+		String option = ctx.option != null? ctx.option.getText().replace("\"", "").trim(): "";
+		ConstraintArgument constraint_argument = modelConstructor.createNewContraintArgument(decision, option);
+		constraintArgument_list.add(constraint_argument);
+		return new Value(constraint_argument); 
+	}
 	@Override 
 	public Value visitObjectiveExpectation(ModelParser.ObjectiveExpectationContext ctx) {
 		String obj_qv =  ctx.var_name().getText().trim();
@@ -200,6 +265,9 @@ public class Visitor extends ModelBaseVisitor<Value> {
 	public Value visitQuality_var_decl(ModelParser.Quality_var_declContext ctx) { 
 		QualityVariable qv = modelConstructor.createNewQualityVariable();
 		String qv_name = ctx.var_name().getText().trim();
+		if(qv_name.equals("Value")){
+			System.out.println("Value");
+		}
 		and_Ref_Parent = qv;
 		arith_expr_Parent = qv;
 		idParent = qv;
@@ -224,15 +292,28 @@ public class Visitor extends ModelBaseVisitor<Value> {
 	public Value visitQualityVariableDecision(ModelParser.QualityVariableDecisionContext ctx) {
 		return visit (ctx.decision_def());
 	}
-	
 	@Override 
 	public Value visitDecisionXOR(ModelParser.DecisionXORContext ctx) {
+		iSXor = true;
+		mutuallyExclusiveCount++;
+		decisionType = DecisionType.MutuallyExclsisve;
+		return visit(ctx.decision_body());
+		
+	}
+	@Override 
+	public Value visitDecisionOR(ModelParser.DecisionORContext ctx) {
+		iSXor =false;
+		OROpetationMode = ctx.op.getText();
+		nonMutuallyExclusiveCount++;
+		decisionType = DecisionType.NonMutuallyExclusive;
 		return visit(ctx.decision_body());
 	}
 	
 	@Override 
 	public Value visitDecision_body(ModelParser.Decision_bodyContext ctx) { 
 		OR_Refinement or_ref = modelConstructor.createNewOr_Refinement();
+		or_ref.isXOR(iSXor);
+		or_ref.orOperationMode(OROpetationMode);
 		Decision d = modelConstructor.createNewDecision();
 		String decision_name = ctx.decision_Name.getText().replace("\"", "").trim();
 		d.setDecisionLabel(decision_name);
@@ -242,11 +323,13 @@ public class Visitor extends ModelBaseVisitor<Value> {
 			optionNames.add(optionName);
 			d.addOption(optionName);
 		}
+		modelConstructor.addDecisionType (decision_types, d,  decisionType);
 		int i =0;
 		for (ModelParser.Option_defContext optionDefContext : ctx.option_def()){
 			// could be a unary, binary expr or a parameter.
 			Value definition =visit(optionDefContext);
-			modelConstructor.addOR_RefinementDefinition(or_ref,optionNames.get(i),definition,and_Ref_Parent,decision_name);
+			//modelConstructor.addOR_RefinementDefinition(or_ref,optionNames.get(i),definition,and_Ref_Parent,decision_name);
+			modelConstructor.addOR_RefinementDefinition(or_ref,optionNames.get(i),definition,and_Ref_Parent,d);
 			i++;
 		}
 		

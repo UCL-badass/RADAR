@@ -35,6 +35,7 @@ class RefinementGraphGenerator implements ModelVisitor {
 	 * 
 	 */
 	boolean addObjectiveLabel = true;
+	List<Decision> decisions;
 	/**
 	 * Constructs a Refinement Graph Generator.
 	 * @param subGraphObj subgraph objective used to restrict the genration of a goal graph to a particular objective.
@@ -56,6 +57,7 @@ class RefinementGraphGenerator implements ModelVisitor {
 			dotString += undefinedVar + " [shape = plaintext, fontcolor =red]";
 		}
 		
+		
 		dotString += "}";
 		return dotString;
 	}
@@ -65,7 +67,7 @@ class RefinementGraphGenerator implements ModelVisitor {
 	 */
 	@Override
 	public void visit(Model m) {
-
+		
 	}
 	/**
 	 * Implementation of the Objective visitor to deal with specifics of what to do when we visit an Objective instance.
@@ -77,7 +79,8 @@ class RefinementGraphGenerator implements ModelVisitor {
 			// when subgraph is specified, we do not want the objective to show, it starts from the quality variable.
 			String objDotString = obj.getLabel() + " [shape = box] \n";
 			QualityVariable qvReferTo = obj.getQualityVariable();
-			if (subGraphObjective != null){
+			if(qvReferTo != null){
+				if (subGraphObjective != null){
 					if (!subGraphObjective.getQualityVariable().getLabel().equals(obj.getQualityVariable().getLabel())){
 						dotString +=  objDotString;
 						// no edge when objective name equals var it refers to.
@@ -86,15 +89,17 @@ class RefinementGraphGenerator implements ModelVisitor {
 							dotString +=  childDotString;
 						}
 					}
-			}
-			else{
+				}
+				else{
 					dotString +=  objDotString;
 					// no edge when objective name equals var it refers to.
 					if (!obj.getLabel().equals(qvReferTo.getLabel())){
 						String childDotString = qvReferTo.getLabel() + "->" +  "\""+  obj.getLabel() +  "\"" + "\n";
 						dotString +=  childDotString;
 					}
+				}
 			}
+			
 			visited.add(obj);
 		}
 	}
@@ -199,7 +204,12 @@ class RefinementGraphGenerator implements ModelVisitor {
 				decisionID = ""+ID;
 				andRefDecisionID.put(andRef, ID);
 			}
-			dotString += decisionID + "[label=\""  + andRef.getDecisionNameAndRefRefersTo()   +"\", shape = polygon, sides =8]"; 
+			
+
+			String decisionTye = andRef.getDecisionAndRefReferTo().getDecisionType() == DecisionType.MutuallyExclsisve? " ": ",peripheries = 2";
+			
+			
+			dotString += decisionID + "[label=\""  + andRef.getDecisionNameAndRefRefersTo()   +"\", shape = polygon, sides =8" +decisionTye+" ]"; 
 			String parentLabel = andRef.getParent().getLabel();
 			String decisionToParent =  decisionID + "->" +  "\""+  parentLabel +  "\"" + "\n";
 			if (!edges.contains(decisionToParent)){

@@ -1,0 +1,60 @@
+Model BerkeleyDB;
+
+Objective Max ExpectedNetBenefit = EV (NB);
+Objective Min ExpectedFeatureSize = EV (TotalFeatureSize);
+
+// ===============Modelling Net Benefit==============
+
+NB = Revenue - TotalFeatureCost;
+
+Revenue = normalCI (1000, 1200);
+
+TotalFeatureCost =  FeatureIndexesCost
+			+ NonMandatoryFeaturesCost;
+
+NonMandatoryFeaturesCost = decision-subset (+) ("Non Mandatory Feature"){
+	"Statistics" :  triangular (200,250,300);
+	"Cryptography" :  triangular (250, 300, 350);
+	"Replication" : triangular (150,200,250);
+	"Verification" : triangular (50,100,150);
+	"Diagnostic" : triangular (250,300,350);
+	"Sequence" : triangular (40,50,60);
+}
+
+FeatureIndexesCost =  CostOfFeatureIndex +  FeatureIndexesSubFeatureCost;
+CostOfFeatureIndex = deterministic (10);
+FeatureIndexesSubFeatureCost = FeatureBTreeCost + NonMandatoryIndexSubFeatureCosts;
+FeatureBTreeCost = decision ("B-Tree"){
+	"B-Tree Fast" :  triangular (45,50,55);
+	"B-Tree Small" : triangular (50,75,100);
+}
+NonMandatoryIndexSubFeatureCosts = decision-subset(+)("Index  Non Mandatory SubFeatures"){
+	"Hash" : triangular (100, 125,150);
+	"Queue" : triangular (40,50,60);
+}
+
+// ===============Modelling Feature SIze==============
+
+TotalFeatureSize =  FeatureIndexesSIze
+			+ NonMandatoryFeaturesSIze;
+
+NonMandatoryFeaturesSIze = decision-subset (+) ("Non Mandatory Feature"){
+	"Statistics" :  deterministic (285);
+	"Cryptography" :  deterministic (19);
+	"Replication" : deterministic (89);
+	"Verification" : deterministic (50);
+	"Diagnostic" : deterministic (191);
+	"Sequence" : deterministic (50);
+}
+
+FeatureIndexesSIze =  SIzeOfFeatureIndex +  FeatureIndexesSubFeatureSIze;
+SIzeOfFeatureIndex = deterministic (1);
+FeatureIndexesSubFeatureSIze = FeatureBTreeSIze + NonMandatoryIndexSubFeatureSIzes;
+FeatureBTreeSIze = decision ("B-Tree"){
+	"B-Tree Fast" :  deterministic (1800);
+	"B-Tree Small" : deterministic (340);
+}
+NonMandatoryIndexSubFeatureSIzes = decision-subset(+)("Index  Non Mandatory SubFeatures"){
+	"Hash" : deterministic (113);
+	"Queue" : deterministic (58);
+}

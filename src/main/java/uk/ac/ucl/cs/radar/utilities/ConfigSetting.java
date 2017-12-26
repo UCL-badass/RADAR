@@ -41,7 +41,7 @@ public class ConfigSetting {
 	public static int NUMBER_OF_SIMULATION=10000;
 	public static double MUTATION= 0.05;
 	public static int THREADS=1;
-	public static long SEED= 0; // 20140604; //
+	public static long SEED= 20170717; //
 	public static int MAX_EVALUATIONS=1000;
 	public static int ALGORITHM_RUNS=3;
 	public static String DEFAULT_APRROX_ALGORITHM= "NSGAII";

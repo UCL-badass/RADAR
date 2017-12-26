@@ -64,8 +64,13 @@ public class ModelView extends PlainView {
     private static String RADAR_MINIMISE = "(\\bMin\\b)";
     private static String RADAR_EV = "(\\bEV\\b)";
     private static String RADAR_PR = "(\\bPr\\b)";
+    private static String RADAR_CONSTRAINT = "(\\bConstraint\\b)";
     private static String RADAR_PERCENTILE = "(\\bpercentile\\b)";
     private static String RADAR_DECISION ="(\\bdecision\\b)"; //(\\w*^triangular$\\w*)
+    private static String RADAR_DECISIONSUBSET ="(\\bdecision-subset\\b)"; //(\\w*^triangular$\\w*)
+    private static String RADAR_REQUIRECONSTRAINT ="(\\brequires\\b)"; //(\\w*^triangular$\\w*)
+    private static String RADAR_EXCLUDECONSTRAINT ="(\\bexcludes\\b)"; //(\\w*^triangular$\\w*)
+    private static String RADAR_ANDCONSTRAINT ="(\\bcouples\\b)"; //(\\w*^triangular$\\w*)
     private static String RADAR_COMMENT = "(\\/\\/[\\w .:_,!/+^*&~.();=]*|\\/\\*[\\w .:_,!/+^*&~.();=]*\\*\\/)";
     private static String RADAR_DISTRIBUTION = "(\\w*\\btriangular\\b\\w*|\\w*\\bnormalCI\\b\\w*|\\w*\\bnormal\\b\\w*|\\w*\\bgeometric\\b\\w*|\\w*\\bdeterministic\\b\\w*|\\w*\\bexponential\\b\\w*|\\w*\\bbinomial\\b\\w*|\\w*\\buniform\\b\\w*|\\w*\\brandom\\b\\w* )";
    
@@ -82,7 +87,13 @@ public class ModelView extends PlainView {
         patternColors.put(Pattern.compile(RADAR_EV),  Color.BLUE);
         patternColors.put(Pattern.compile(RADAR_PR), Color.BLUE);
         patternColors.put(Pattern.compile(RADAR_PERCENTILE), Color.BLUE);
+        patternColors.put(Pattern.compile(RADAR_CONSTRAINT), Color.BLUE);
+       
         patternColors.put(Pattern.compile(RADAR_DECISION), Color.BLUE); //Color.BLUE, 30,144,255,  255,99,71
+        patternColors.put(Pattern.compile(RADAR_DECISIONSUBSET), Color.BLUE);
+        patternColors.put(Pattern.compile(RADAR_REQUIRECONSTRAINT), Color.BLUE);
+        patternColors.put(Pattern.compile(RADAR_EXCLUDECONSTRAINT), Color.BLUE);
+        patternColors.put(Pattern.compile(RADAR_ANDCONSTRAINT), Color.BLUE);
         patternColors.put(Pattern.compile(RADAR_COMMENT), new Color(34,139,34)); //124,252,0));//0,201,87
         patternColors.put(Pattern.compile(RADAR_DISTRIBUTION), Color.BLUE); //255,99,71, 99,184,255
        

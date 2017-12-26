@@ -7,15 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import uk.ac.ucl.cs.radar.model.AnalysisResult;
 import uk.ac.ucl.cs.radar.model.Model;
 import uk.ac.ucl.cs.radar.model.ModelSolver;
 import uk.ac.ucl.cs.radar.model.Parser;
-import uk.ac.ucl.cs.radar.model.ScatterPlot3D;
+import uk.ac.ucl.cs.radar.model.ScatterPlotJFrame3D;
 import uk.ac.ucl.cs.radar.model.SyntheticModelGenerator;
-import uk.ac.ucl.cs.radar.model.TwoDPlotter;
-import uk.ac.ucl.cs.radar.userinterface.InputValidator;
+import uk.ac.ucl.cs.radar.model.TwoDJFramePlotter;
 import uk.ac.ucl.cs.radar.utilities.Helper;
+import uk.ac.ucl.cs.radar.utilities.InputValidator;
 
 public class RadarExperiment extends Thread {
 	int min_nbr_variables;
@@ -147,10 +148,10 @@ public class RadarExperiment extends Thread {
 			}
     		if (generatePlots){
     			if (analysis_result.getShortListObjectives().get(0).length == 2){
-					TwoDPlotter twoDPlot = new TwoDPlotter();
+					TwoDJFramePlotter twoDPlot = new TwoDJFramePlotter();
 					twoDPlot.plot(semanticModel,modelResultPath, analysis_result);
 				}else if (analysis_result.getShortListObjectives().get(0).length == 3){
-					ScatterPlot3D sc3D= new ScatterPlot3D( );
+					ScatterPlotJFrame3D sc3D= new ScatterPlotJFrame3D( );
 					sc3D.plot(semanticModel, modelResultPath, analysis_result);;
 ;				}
     		}

@@ -1,0 +1,135 @@
+Model BSS;
+
+Objective Max ExpectedNetBenefit = EV(NB);
+Objective Min Risk = Pr(NB <0);
+	
+NB = Benefit - Cost;
+
+Benefit = BenefitOfSecuringBicycles
+ 			+ BenefitOfDockStations 
+ 			+ BenefitOfSystemAccessMgt
+ 			+ BenefitOfSystemRegistrationMgt
+ 			+ BenefitOfNonMandatorySystemComponents;
+
+BenefitOfSecuringBicycles = decision-subset (+)("Securing Bicycles"){
+ 	"Localisation feature" : BenefitOfBikeLocalisation;
+ 	"Anti-theft feature" : triangular (0.2,.5,1); 
+}
+BenefitOfBikeLocalisation =  decision-subset (+)("Tracking Mechanism"){
+ 	"GPS feature" : triangular (.5,1, 1.5);
+ 	"RFID feature" : triangular (.2, 2.2, 2.5); 
+}
+BenefitOfDockStations =  decision ("Dock Station"){
+ 	"Permanently Fixed" : triangular (1.5,1.7, 1.9);
+ 	"Temporarily Fixed " : triangular (2,2.2,2.5);
+ 	"Flexible " : triangular (2.4,2.7,3); 
+}
+BenefitOfSystemAccessMgt = decision-subset (+)("System Access Mgt"){
+ 	"Smart card" : triangular (2,2.5, 3);
+ 	"Smart Phone" : triangular (1.5, 1.7,2); 
+ 	"Key Card" : triangular (2.9, 3,3.5);
+}
+BenefitOfSystemRegistrationMgt = decision-subset (+)("System Registration Mgt"){
+ 	"Kisok Reg" : BenefitOfKioskReg;
+ 	"Dock Station Reg" : triangular (1.8, 2,2.2); 
+ 	"Web Reg" : triangular (2.7, 3,3.3);
+}
+BenefitOfKioskReg = decision-subset (+)("Kisok Reg"){
+ 	"Touch Screen" :  triangular (.2, .5, .7);
+ 	"Key card reader" : triangular (.8, 1,1.2); 
+ 	"Credit Card" : triangular (1, 1.2,1.5);
+ 	"Card Dispenser" : triangular (1.2, 1.5, 1.8);
+}
+BenefitOfNonMandatorySystemComp = decision-subset (+)("NonMandatorySystemComp"){
+ 	"System Status Info" : BenefitOfHavingSysStatusInfo;
+ 	"Bike Maintenance" : triangular (1.2,1.5, 2); 
+ 	"Bike Redistribution" :  BenefitOfBikeRedistribution;
+}
+BenefitOfHavingSysStatusInfo = decision-subset (+)("System Status"){
+ 	"Real Time Web Info" : triangular (.5, 1, 1);
+ 	"Real Time Mobile App Info" : triangular (1.5, 2, 3); 
+}
+BenefitOfBikeRedistribution = RedistributionWithoutReward
+                    + BenefitForRewardingUsers;
+RedistributionWithoutReward =  triangular (1,1.5, 2); 
+BenefitForRewardingUsers = decision ("Reward Users"){
+ 	"Without reward" : deterministic (0);
+ 	"With Reward" : triangular (2.5, 2.8, 3); 
+}
+  
+  
+// Modelling the cost   
+Cost = CostOfBicycles  
+			+ CostOfSecuringBicycles
+ 			+ CostOfDockStations 
+ 			+ CostOfSystemAccessMgt
+ 			+ CostSystemRegistrationMgt
+ 			+ CostOfNonMandatorySystemComponents;
+
+
+CostOfBicycles = (NbrBikesToDeploy - NbrBikesCurrentlyDeployed) * UnitCost;
+NbrBikesToDeploy = triangular (500, 550, 600);
+NbrOfBikesCurrentlyDeployed =  deterministic (500);
+UnitCost = decision ("Bicycle Manufacturer Brand"){
+	"A-Bike": normalCI (80 * 10^-6 ,100* 10^-6);
+	"Cortina Cycles": normalCI (100* 10^-6 ,150* 10^-6);
+	"Derby Cycle": normalCI (140* 10^-6, 200* 10^-6);
+	"Bianchi" : normalCI (200 * 10^-6,300* 10^-6);
+	"Catrike" : normalCI (250* 10^-6 ,350* 10^-6);
+}
+
+CostOfSecuringBicycles = decision-subset (+)("Securing Bicycles"){
+ 	"Localisation feature" : CostOfBikeLocalisation;
+ 	"Anti-theft feature" : normalCI (.1,.5); 
+}
+
+CostOfBikeLocalisation
+ =  decision-subset (+)("Tracking Mechanism"){
+ 	"GPS feature" : normalCI (.5,1);
+ 	"RFID feature" : normalCI (.2, .7); 
+}
+
+CostOfDockStations =  decision ("Dock Station"){
+ 	"Permanently Fixed" : triangular (2.5,3, 3.5);
+ 	"Temporarily Fixed " : triangular (3,3.5,4);
+ 	"Flexible " : triangular (3,4,5); 
+}
+CostOfSystemAccessMgt = decision-subset (+)("System Access Mgt"){
+ 	"Smart card" : triangular (3,3.5, 4);
+ 	"Smart Phone" : triangular (2.5, 3,3.5); 
+ 	"Key Card" : triangular (3.5, 4,4.5);
+}
+CostSystemRegistrationMgt = decision-subset (+)("System Registration Mgt"){
+ 	"Kisok Reg" : CostOfKioskReg;
+ 	"Dock Station Reg" : triangular (2.8, 3,3.2); 
+ 	"Web Reg" : triangular (3, 4,5);
+}
+CostOfKioskReg = decision-subset (+)("Kisok Reg"){
+ 	"Touch Screen" :  triangular (1, 1.5, 2);
+ 	"Key card reader" : triangular (1.5, 2,2.5); 
+ 	"Credit Card" : triangular (2, 2.2,2.5);
+ 	"Card Dispenser" : triangular (2, 2.5, 3);
+}
+CostOfNonMandatorySystemComponents = decision-subset (+)("NonMandatorySystemComp"){
+ 	"System Status Info" : CostOfHavingSysStatusInfo;
+ 	"Bike Maintenance" : triangular (.8,1, 1.2); 
+ 	"Bike Redistribution" :  CostFromBikeRedistribution;
+}
+CostOfHavingSysStatusInfo = decision-subset (+)("System Status"){
+ 	"Real Time Web Info" : triangular (3.5,4, 5.5);
+ 	"Real Time Mobile App Info" : triangular (5, 8, 10); 
+}
+CostFromBikeRedistribution = RedistributionCostWithoutReward
+                    		+ CostForRewardingUsers;
+
+RedistributionCostWithoutReward =  normalCI(.8, 1); 
+CostForRewardingUsers = decision ("Reward Users"){
+ 	"Without reward" : deterministic (0);
+ 	"With Reward" : deterministic (1); 
+}
+   
+
+Constraint "System Status": "RT Mobile App Info" requires "Tracking Mechanism": "GPS";
+Constraint "Bicycles" : "Anti-theft feature" requires "Tracking Mechanism": "GPS";
+Constraint "Kiosk Reg" : "Card Dispenser" couples "System Access Mgt": "Key Card";
+Constraint "System Access Mgt" : "Key Card" requires "Kiosk Reg" : "Key card reader";

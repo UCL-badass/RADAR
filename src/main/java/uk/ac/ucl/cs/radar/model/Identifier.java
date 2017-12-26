@@ -46,6 +46,7 @@ class Identifier extends ArithmeticExpression implements ModelVisitorElement {
 	 */
 	@Override
 	public double[] simulate(Solution s) {
+		//System.out.println("ID: " + id);
 		Map<String, QualityVariable> qvList = s.getSemanticModel().getQualityVariables();
 		QualityVariable qv = qvList.get(id);
 		if (qv ==null){

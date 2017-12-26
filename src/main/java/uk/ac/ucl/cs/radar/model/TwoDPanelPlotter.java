@@ -76,7 +76,7 @@ public class TwoDPanelPlotter extends JPanel {
 	        
 	        this.setVisible(true);
 	        
-	        //Helper.writeImageToFolder(outputpath + "Figure/", Helper.getImage(this), "PNG", semanticModel.getModelName());
+	        Helper.writeImageToFolder(outputpath + "Figure/", Helper.getImage(this), "PNG", semanticModel.getModelName());
 		
 		}catch (IllegalArgumentException e){
 			throw new IllegalArgumentException (e.getMessage());

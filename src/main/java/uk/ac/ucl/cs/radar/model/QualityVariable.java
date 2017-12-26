@@ -109,6 +109,7 @@ public class QualityVariable extends ArithmeticExpression implements ModelVisito
 	 * @return an array of simulated values.
 	 */
 	public double [] simulate (Solution s){
+		//System.out.println("QV: " + label);
 		return definition.simulate(s);
 	}
 	/**

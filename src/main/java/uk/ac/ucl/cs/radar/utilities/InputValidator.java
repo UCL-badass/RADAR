@@ -1,4 +1,4 @@
-package uk.ac.ucl.cs.radar.userinterface;
+package uk.ac.ucl.cs.radar.utilities;
 
 import java.io.File;
 import java.util.List;
@@ -43,7 +43,7 @@ public class InputValidator {
 	
 	public static void validateSbseParameters (boolean defaultAlgorithmParameter,List<String> solve,List<String> algorithmParameter ) throws Exception{
 		if (!solve.contains("ExhaustiveSearch") && algorithmParameter.size() <= 0 && defaultAlgorithmParameter == false ){
-			throw new Exception ("Warning: "+ "Algorithm parameters such population size, crossover, mutation and max evaluaitons must be specified for NSGAII, SPEA2, IBEA, MoCell, RandomSearch and PAES using the command '--param' or '--param-default'." ); 
+			throw new Exception ("Warning: "+ "Algorithm parameters such population size, crossover, mutation and max evaluaitons must be specified for NSGAII, SPEA2, IBEA, MoCell using the command '--param' or '--param-default'." ); 
 		}
 		if ( solve.contains("ExhaustiveSearch") && ( algorithmParameter.size() > 0 || defaultAlgorithmParameter == true )){
 			throw new Exception ("Warning: "+ " ExhaustiveSearch does not require algorithm paramters command '--param' or '--param-default'." ); 

@@ -31,6 +31,13 @@ public interface ModelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModelQualityVariableList(ModelParser.ModelQualityVariableListContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code modelConstraint}
+	 * labeled alternative in {@link ModelParser#model_element}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitModelConstraint(ModelParser.ModelConstraintContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ModelParser#objective_decl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -65,6 +72,18 @@ public interface ModelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitObjectivePercentile(ModelParser.ObjectivePercentileContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ModelParser#constraint_decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstraint_decl(ModelParser.Constraint_declContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ModelParser#constraint_argument}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstraint_argument(ModelParser.Constraint_argumentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ModelParser#quality_var_decl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -98,6 +117,13 @@ public interface ModelVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDecisionXOR(ModelParser.DecisionXORContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code decisionOR}
+	 * labeled alternative in {@link ModelParser#decision_def}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecisionOR(ModelParser.DecisionORContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ModelParser#decision_body}.
 	 * @param ctx the parse tree

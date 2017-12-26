@@ -1,24 +1,27 @@
 package uk.ac.ucl.cs.radar.model;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import uk.ac.ucl.cs.radar.model.Decision;
+
 public final class Solution {
 
-	private final Map<Decision, String> selection;
-	private  Map<Decision, List<String>> nonMutualSelection;
+	private boolean isValid;
+	private  int violations;
+	private final Map<Decision, List<String>> selection;
 	private Model sematicModel;
 	
 	public Solution(){
-		selection = new LinkedHashMap<Decision, String>();
-		nonMutualSelection = new LinkedHashMap<Decision, List<String>>();
+		selection = new LinkedHashMap<Decision, List<String>>();
 	}
 	/**
 	 * Constructs a solution with a mapping of decisions and selected options.
 	 * @param mapping a mapping between decision and selected option.
 	 */
-	public Solution(Map<Decision, String> mapping){
+	public Solution(Map<Decision, List<String>> mapping){
 		selection = mapping;
 	}
 	/**
@@ -35,8 +38,8 @@ public final class Solution {
 	 * @param option selected option.
 	 * @return a new solution instance with the updated decision and selected option.
 	 */
-	Solution addDecision (Decision d, String option){
-		Map<Decision, String> mapping = new LinkedHashMap<Decision, String>(this.selection);
+	Solution addDecision (Decision d, List<String> option){
+		Map<Decision, List<String>> mapping = new LinkedHashMap<Decision, List<String>>(this.selection);
 		mapping.put(d, option);
 		return new Solution(mapping);
 	}
@@ -48,7 +51,7 @@ public final class Solution {
 	* @return a new solution that takes the union of all decisions in `this` and `s`.
 	*/
 	Solution union(Solution s){
-		Map<Decision, String> mapping = new LinkedHashMap<Decision, String>(s.selection);
+		Map<Decision, List<String>> mapping = new LinkedHashMap<Decision, List<String>>(s.selection);
 		mapping.putAll(this.selection);
 		return new Solution(mapping);		
 	}
@@ -56,8 +59,18 @@ public final class Solution {
 	 * @param d decision.
 	 * @return the selected option for the given decision d.
 	 */
-	public String selection (Decision d){
+	public List<String> selection (Decision d){
 		return selection.get(d);
+	}
+	
+	public boolean containsDecision (String decisionName){
+		boolean decisionInSolution =false;
+		for(Decision d : selection.keySet()){
+			if (d.getDecisionLabel().equals(decisionName)){
+				decisionInSolution = true;
+			}
+		}
+		return decisionInSolution;
 	}
 	/**
 	 * @return the set of all decision for a solution instance.
@@ -94,8 +107,26 @@ public final class Solution {
 	/**
 	* @return a solution selection, a mapping between decisions and options
 	*/
-	public Map<Decision, String> getSelection(){
+	public Map<Decision, List<String>> getSelection(){
 		return selection;
+	}
+	public List<String> getDecisionSelection(String decisonName){
+		List<String> result = new ArrayList<String>();
+		for(Map.Entry<Decision, List<String>> entry: selection.entrySet()){
+			if(entry.getKey().getDecisionLabel().equals(decisonName)){
+				return entry.getValue();
+			}
+		}
+		return result;
+	}
+	public void setIsValidSolution (boolean isValid){
+		this.isValid = isValid;
+	}
+	public void incrementViolationCounter (){
+		this.violations++;
+	}
+	public double getNbrViolations (){
+		return (double)violations;
 	}
 	
 	

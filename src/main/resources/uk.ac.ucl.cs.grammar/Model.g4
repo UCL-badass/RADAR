@@ -5,6 +5,7 @@ model 						:'Model' var_name  ';' NEWLINE* (model_element)*
 
 model_element				: objective_decl+ 								#modelObjectiveList
 							| quality_var_decl+								#modelQualityVariableList
+							| constraint_decl+								#modelConstraint
 							;
 																
 objective_decl				:'Objective' optimisationDirection  var_name ('=' objective_def)? ('with' number 'margin')? ';' NEWLINE* ;			
@@ -12,9 +13,20 @@ objective_decl				:'Objective' optimisationDirection  var_name ('=' objective_de
 objective_def				:'EV'SINGLESPACE* '(' var_name ')' 													#objectiveExpectation
 							|'Pr'SINGLESPACE* '(' var_name ')' 													#objectiveBooleanProbability
 							|'Pr'SINGLESPACE* '(' comparision ')' 												#objectiveProbability
-							|'percentile' SINGLESPACE* '(' (op = ('-'| '+'))? var_name ',' integerLiteral ')'				#objectivePercentile
+							|'percentile' SINGLESPACE* '(' (op = ('-'| '+'))? var_name ',' integerLiteral ')'	#objectivePercentile
 							; 
 													
+
+constraint_decl				:  'Constraint' constraint_argument constraint = ('requires'| 'excludes'| 'couples') constraint_argument ';'
+							;
+
+constraint_argument			: decision = StringLiteral (':' option = StringLiteral )?
+							;
+							
+//constraint_argument		: decision = Identifier (':' option = Identifier)?
+//							;
+
+
 quality_var_decl			:var_name  '='  quality_var_def  NEWLINE* ;
 
 quality_var_def				: decision_def 															#qualityVariableDecision
@@ -23,7 +35,8 @@ quality_var_def				: decision_def 															#qualityVariableDecision
 							;
 
 
-decision_def				:'decision'  decision_body 				#decisionXOR
+decision_def				:'decision'  decision_body 										#decisionXOR
+							|'decision-subset' '(' op = ('*'| '+') ')'  decision_body       #decisionOR
 							;
 									
 decision_body				: '(' decision_Name= StringLiteral ')' '{' (option_name ':' option_def ';' NEWLINE?)+'}'
@@ -146,6 +159,11 @@ StringLiteral
     :  '"' ( EscapeSequence | ~('\\'|'"') )* '"'
     ;
     
+//UnquotedStringLiteral
+//    :  ( EscapeSequence | ~('\\'|'"') )+
+//    ;
+    
+    
 fragment
 EscapeSequence
     :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
@@ -166,7 +184,7 @@ UnicodeEscape
     ;
 
 Identifier
-    :   Letter (Letter|JavaIDDigit)*
+    :   Letter (Letter|JavaIDDigit|'-')*
     ; 
 
 fragment

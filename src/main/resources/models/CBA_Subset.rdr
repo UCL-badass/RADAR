@@ -1,0 +1,34 @@
+Model CBA_Subset;
+Objective Max ENB = EV(NB);
+Objective Min LP=Pr(NB <0);
+NB = Value -Cost;
+Value = F1_Value  + F2_Value  - F3_Value;
+F1_Value =  decision("F1"){
+	"O11" : normalCI(0.9, 1.1);
+	"O12" : normalCI(1, 9);
+}
+F2_Value =  decision-subset(+)("F2"){
+	"O21" : normalCI(2.1, 3.1);
+	"O22" : normalCI(2, 3);
+}
+F3_Value =  decision("F3"){
+	"O31" : normalCI(2.1, 11.1);
+	"O32" : normalCI(2, 11);
+}
+Cost = F1_Cost + F2_Cost  - F3_Cost;
+F1_Cost =  decision("F1"){
+	"O11" : deterministic(0);
+	"O12" : normalCI(2, 5);
+}
+F2_Cost =  decision-subset(+)("F2"){
+	"O21" : deterministic(0);
+	"O22" : normalCI(3, 6);
+}
+F3_Cost =  decision("F3"){
+	"O31" : deterministic(0);
+	"O32" : normalCI(2, 7);
+}
+
+Constraint "F1" :"O11" requires "F2": "O22";
+Constraint "F2":"O22" excludes "F3": "O32";
+Constraint "F1" requires "F3";

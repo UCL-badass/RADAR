@@ -1,13 +1,24 @@
 package uk.ac.ucl.cs.radar.model;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
-import uk.ac.ucl.cs.radar.exception.IdenfierAsParameterException;
+import uk.ac.ucl.cs.radar.model.Constraint;
+import uk.ac.ucl.cs.radar.model.ConstraintArgument;
+import uk.ac.ucl.cs.radar.model.ConstraintViolation;
+import uk.ac.ucl.cs.radar.model.Decision;
+import uk.ac.ucl.cs.radar.model.DecisionType;
+import uk.ac.ucl.cs.radar.model.ExcludeConstraint;
+import uk.ac.ucl.cs.radar.model.Model;
+import uk.ac.ucl.cs.radar.model.Objective;
+import uk.ac.ucl.cs.radar.model.ProblemType;
+import uk.ac.ucl.cs.radar.model.RequireConstraint;
+import uk.ac.ucl.cs.radar.model.Value;
 import uk.ac.ucl.cs.radar.exception.ParameterDistributionException;
 
 
@@ -25,7 +36,18 @@ public class ModelConstructor {
 	public  Model createNewModel (){
 		return new Model();
 	}
-	
+	public void checkXORDecisionNotConflictingXORConstraint (List<Constraint> constraints, Map<String,Decision> decisions){
+		for (Constraint c : constraints ){
+			if (c instanceof CoupleConstraint  || c instanceof RequireConstraint  ){
+				String leftDecision = c.getLeftConstraintArgumnet().getDecision();
+				String rightDecision = c.getRightConstraintArgumnet().getDecision();
+				if (leftDecision.equals(rightDecision) && decisions.get(leftDecision).getDecisionType().equals(DecisionType.MutuallyExclsisve)){
+					throw new RuntimeException ("Constraint inconsistent with decision: the XOR decision "+ leftDecision + " cannot have an require or couple constraint relationship.");
+
+				}
+			}
+		}
+	}
 	void addModelSubGraphObjective (Model model, String obj_name, String subGraphObj){
 		if (subGraphObj != null && !StringUtils.isEmpty(subGraphObj)){
 			Objective subGraphObjective = null;
@@ -75,6 +97,42 @@ public class ModelConstructor {
 		model.setModelName(modelName);
 		return model;
 	}
+	public Model addProblemType (Model model, int mutuallyExclusiveCount, int nonMutuallyExclusiveCount){
+		if(mutuallyExclusiveCount > 0 && nonMutuallyExclusiveCount ==0){
+			model.setProblemType(ProblemType.MutuallyExclsisve);
+		}else if (mutuallyExclusiveCount == 0 && nonMutuallyExclusiveCount > 0){
+			model.setProblemType(ProblemType.NonMutuallyExclusive);
+		}else{
+			model.setProblemType(ProblemType.BothMutualAndNonMUtuallyExclusive);
+		}
+		return model;
+	}
+	public void addDecisionType (Map<Decision, DecisionType> decisionTypes, Decision decision, DecisionType decisionType){
+		if(!decisionTypes.containsKey(decision)){
+			decision.setDecisionType(decisionType);
+			decisionTypes.put(decision, decisionType);
+		}else{
+			DecisionType dt = decisionTypes.get(decision);
+			if (!dt.equals(decisionType)){
+				throw new RuntimeException ("Decision inconsistency: the decision "+ decision + " has both mutually and non-mutually exclusive options.");
+			}
+			decision.setDecisionType(decisionType);
+		}
+	}
+	public  Model addModelConstraint (Model model, List<Constraint> constraints){
+		model.setConstraint(constraints);
+		return model;
+	}
+	public void addConstraintObjective (List<Constraint> constraints, Map<String, Objective> objectives,  Map<String, Value> obj_definition){
+		if (constraints.size()>0){
+			Objective obj = new Objective();
+			obj.setLabel("Nbr Constraint Violations");
+			obj.setIsMinimisation(true);
+			//obj.setStatistic(new ConstraintViolation());
+			objectives.put(obj.getLabel(), obj);
+			obj_definition.put(obj.getLabel(), new Value(new ConstraintViolation()));
+		}
+	}
 	public  Model addObjectivesToModel (Model model, Map<String, Value> obj_definition,Map<String, Objective> obj_list, Map<String, QualityVariable> qvlist,String infoValueObjective, String subGraphObjective){
 		for (Map.Entry<String, Objective> entry: obj_list.entrySet()){
 			Value obj = obj_definition.get(entry.getKey());
@@ -111,6 +169,8 @@ public class ModelConstructor {
 					if (!qvlist.containsKey(((Identifier)binaryExpr.getLeftExpression()).getID())) throw new RuntimeException ("Variable name "+ ((Identifier)binaryExpr.getLeftExpression()).getID() +" refereneced in the objective definition is not defined.");
 					modelObj.setQualityVariable(qvlist.get(((Identifier)binaryExpr.getLeftExpression()).getID()));
 				}
+			}else if (obj.getStatistic() instanceof ConstraintViolation){
+				modelObj.setStatistic((ConstraintViolation)obj.getStatistic());
 			}
 			addModelObjective(model,modelObj.getLabel(),modelObj );
 			addModelInfoValueObjective ( model, modelObj.getLabel(), infoValueObjective);
@@ -178,12 +238,14 @@ public class ModelConstructor {
 		OR_Refinement or_refinement = new OR_Refinement ();
 		return or_refinement;
 	}
-	public  Value addOR_RefinementDefinition (OR_Refinement or_ref, String option_name, Value option_def, QualityVariable and_Ref_Parent, String decision){
+	//public  Value addOR_RefinementDefinition (OR_Refinement or_ref, String option_name, Value option_def, QualityVariable and_Ref_Parent, String decision){
+	public  Value addOR_RefinementDefinition (OR_Refinement or_ref, String option_name, Value option_def, QualityVariable and_Ref_Parent, Decision decision){
 		AND_Refinement and_ref = new AND_Refinement();
 		if (and_Ref_Parent != null){
 			and_ref.setParent(and_Ref_Parent);
 		}
-		and_ref.setDecisionNameAndRefRefersTo(decision);
+		and_ref.setDecisionNameAndRefRefersTo(decision.getDecisionLabel());
+		and_ref.setDecisionAndRefReferTo(decision);
 		and_ref.addDefinition(option_def.getArithmeticExpression());
 		or_ref.addDefinition(option_name, and_ref);
 		return new Value(or_ref);
@@ -196,6 +258,27 @@ public class ModelConstructor {
 		d.setDecisionLabel(decision_name);
 		d.addOption(option);
 		return d;
+	}
+	public ConstraintArgument createNewContraintArgument (String decision, String option){
+		ConstraintArgument arg = new ConstraintArgument();
+		arg.setDecision(decision);
+		arg.setOption(option);
+		return arg;
+	}
+	public  Constraint createNewConstraint (String constraintType, ConstraintArgument leftArg,  ConstraintArgument rightArg){
+		Constraint constraint = null;
+		
+		if(constraintType.equals("excludes")){
+			constraint = new ExcludeConstraint();
+		}else if (constraintType.equals( "requires")){
+			constraint = new RequireConstraint();
+		}else if (constraintType.equals("couples")){
+			constraint = new CoupleConstraint();
+		}
+		
+		constraint.setLeftConstraintArgumnet(leftArg);
+		constraint.setRightConstraintArgumnet(rightArg);
+		return constraint;
 	}
 	public  Objective createNewObjective (String obj_name,String optimisationDirection){
 		Objective obj = new Objective ();

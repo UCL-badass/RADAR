@@ -1,0 +1,579 @@
+Model WebShop;
+
+Objective Min ExpectedCost = EV(Cost);
+Objective Min ExpectedTotalDefect = EV(TotalDefects);
+Objective Max TotalFeaturesUsedBefore = EV(FeaturesUsedBefore);
+Objective Max TotalFeatureCount = EV(FeatureCount);
+
+Cost =  CostOfFeatureWebServer + CostOfAchievingOtherServices;
+
+CostOfFeatureWebServer =  CostOfProtocolAndLogging +CostOfFeatureContent;
+
+CostOfProtocolAndLogging = decision-subset (+)("Protocol And Logging"){
+	"Logging": CostOfFeatureLogging;
+	"Protocols": CostOfFeatureProtocols;
+}
+						 
+CostOfFeatureLogging = decision ("Feature Logging"){
+	"DB": CostOfUsingDB;
+	"File": CostOfUsingFile;
+}
+
+CostOfUsingDB = deterministic (10.308317459185346);
+
+CostOfUsingFile = deterministic (5.901282664841281);
+
+CostOfFeatureProtocols = decision-subset(+) ("Feature Protocol"){
+	"NTTP": deterministic (13.682644828346174);
+	"FTP": deterministic (13.008853827785588);
+	"HTTPS" : deterministic (10.048601003623034);
+}
+
+CostOfFeatureContent = CostOfFeatureStatic + CostOfFeatureActive;
+
+CostOfFeatureStatic = deterministic(11.101621731632662);
+
+CostOfFeatureActive = decision-subset(+) ("Active Features"){
+	"Active": deterministic (12.247116996854373);
+	"ASP": deterministic(8.620782055044714);
+	"PHP": deterministic(10.641905327748809);
+	"JSP": deterministic(12.95291397374664);
+	"CGI": deterministic(12.141681946598066);
+}
+
+
+CostOfAchievingOtherServices = decision-subset(+)("Other Services"){
+	"Additional Services": CostOfFeatureAdditionalServices;
+	"Security": CostOfFeatureSecurity;
+	"Persistence": CostOfFeaturePersistence;
+	"Performance": CostOfFeaturePerformance;
+}
+
+CostOfFeatureAdditionalServices = decision-subset(+)("Feature Additional Services"){
+	"Additional Services": deterministic(7.5092053767634654);
+	"Site Statistics": CostOfFeatureSiteStatistics;
+	"Site Search": CostOfFeatureSiteSearch;
+	"Ad Server": CostOfFeatureAdServer;
+}
+
+CostOfFeatureSiteStatistics = CostOfFeatureStatistics  + CostOfFeatureBasicStat + CostOfFeatureAdvancedStat;
+
+CostOfFeatureStatistics =deterministic (14.689398134577047); 
+
+CostOfFeatureBasicStat = deterministic (6.166499393904992);
+
+CostOfFeatureAdvancedStat = decision ("Feature Advanced Stat"){
+	"Without Advanced Stat": deterministic (0);
+	"With Advanced Stat": deterministic (10.419039139443939);
+}
+CostOfFeatureSiteSearch = decision-subset (+)("Feature Site Search"){
+	"Site Search": CostOfSiteSearch;
+	"Images": CostOfFeatureImages;
+	"Text": CostOfFeatureText;
+}
+
+CostOfSiteSearch = deterministic (9.758947026333994);
+
+CostOfFeatureImages = deterministic(8.148236814831348);
+
+CostOfFeatureText =  CostOfText + CostOfFeatureHTML + CostOfFeatureDynamic;
+
+CostOfText = deterministic (13.465111749758071);
+
+CostOfFeatureHTML = deterministic(10.95267855613079);
+
+CostOfFeatureDynamic = decision ("Feature Dynamic"){
+	"Without Dynamic": deterministic (0);
+	"With Dynamic": deterministic (8.863099463028671);
+}
+
+CostOfFeatureAdServer = CostOfAdServer 
+					+ CostOfFeatureReports 		
+					+ CostOfFeatureBanners 
+					+ CostOfPopupsAndKeywordSupport;
+
+CostOfAdServer = deterministic (7.7496457787452195);
+
+CostOfFeatureReports = deterministic (6.4745651041969055);
+
+CostOfFeatureBanners =  CostOfBanners + CostOfFeatureImage + CostOfFeatureFlash;
+
+CostOfBanners  = deterministic (7.363245163135134);
+
+CostOfFeatureImage = deterministic (13.428384485896377);
+
+CostOfFeatureFlash =  decision ("Flash"){
+	"Without Flash": deterministic (0);
+	"With Flash": deterministic(5.452286607902222);
+}
+
+CostOfPopupsAndKeywordSupport = decision-subset(+)("Popups And Keyword Support"){
+	"Popups": CostOfFeaturePopups;
+	"Keyword Support": CostOfFeatureKeywordSupport;
+}
+
+CostOfFeatureKeywordSupport =deterministic(6.100473520805334);
+
+CostOfFeaturePopups = deterministic (11.397415959703473);
+
+CostOfFeaturePersistence = CostOfPersistence + CostOfPersistenceSubFeatures;
+
+CostOfPersistence = deterministic (10.474662762049276);
+
+CostOfPersistenceSubFeatures = decision("Persistence Mechanism"){
+	"XML":  deterministic (14.054171683911981); 
+	"Database": deterministic (6.7377605081216725);
+}
+
+CostOfFeatureSecurity =  CostOfSecurity + CostOfSecuritySubFeatures;
+
+CostOfSecurity = deterministic (5.013527622729248);
+
+CostOfSecuritySubFeatures = decision-subset(+)("Security Mechanism"){
+	"Data Storage":  deterministic ( 9.556632783363145);
+	"Data Transfer": deterministic (5.222981863350846);
+	"User Authentication": deterministic (12.234241931520607);
+}
+
+CostOfFeaturePerformance = CostOfPerformance + CostOfPerformanceSubFeatures;
+
+CostOfPerformance = deterministic (5.013527622729248);
+
+CostOfPerformanceSubFeatures = decision("Feature Performance"){
+	"Milli Sec":  deterministic (11.690308919683972);
+	"Seconds": deterministic (9.08978755801254);
+	"Minutes": deterministic (8.283453001056765);
+}
+//=====================DEFECT COUNT=================================
+
+TotalDefects =  DefectCountOnFeatureWebServer + DefectCountOnAchievingOtherServices;
+
+DefectCountOnFeatureWebServer =  DefectCountOnProtocolAndLogging +DefectCountOnFeatureContent;
+
+DefectCountOnProtocolAndLogging = decision-subset (+)("Protocol And Logging"){
+"Logging": DefectCountOnFeatureLogging;
+"Protocols" : DefectCountOnFeatureProtocols;
+}
+ 
+DefectCountOnFeatureLogging = decision ("Feature Logging"){
+"DB" : DefectCountOnUsingDB;
+"File" : DefectCountOnUsingFile;
+}
+
+DefectCountOnUsingDB = deterministic (5);
+
+DefectCountOnUsingFile = deterministic (0);
+
+DefectCountOnFeatureProtocols = decision-subset(+) ("Feature Protocol"){
+"NTTP" : deterministic (6);
+"FTP" : deterministic (6);
+"HTTPS" : deterministic (0);
+}
+
+DefectCountOnFeatureContent = DefectCountOnFeatureStatic + DefectCountOnFeatureActive;
+
+DefectCountOnFeatureStatic = deterministic(3);
+
+DefectCountOnFeatureActive = decision-subset(+) ("Active Features"){
+"Active" : deterministic (0);
+"ASP": deterministic(0);
+"PHP": deterministic(3);
+"JSP": deterministic(6);
+"CGI": deterministic(5);
+}
+
+
+DefectCountOnAchievingOtherServices = decision-subset(+)("Other Services"){
+"Additional Services": DefectCountOnFeatureAdditionalServices;
+"Security" : DefectCountOnFeatureSecurity;
+"Persistence" : DefectCountOnFeaturePersistence;
+"Performance" : DefectCountOnFeaturePerformance;
+}
+
+DefectCountOnFeatureAdditionalServices = decision-subset(+)("Feature Additional Services"){
+"Additional Services" : deterministic(6);
+"Site Statistics" : DefectCountOnFeatureSiteStatistics;
+"Site Search" : DefectCountOnFeatureSiteSearch;
+"Ad Server" : DefectCountOnFeatureAdServer;
+}
+
+DefectCountOnFeatureSiteStatistics = DefectCountOnFeatureStatistics  + DefectCountOnFeatureBasicStat + DefectCountOnFeatureAdvancedStat;
+
+DefectCountOnFeatureStatistics =deterministic (0); 
+
+DefectCountOnFeatureBasicStat = deterministic (8);
+
+DefectCountOnFeatureAdvancedStat = decision ("Feature Advanced Stat"){
+"Without Advanced Stat" : deterministic (0);
+"With Advanced Stat" : deterministic (5);
+}
+DefectCountOnFeatureSiteSearch = decision-subset (+)("Feature Site Search"){
+"Site Search" : DefectCountOnSiteSearch;
+"Images" : DefectCountOnFeatureImages;
+"Text" : DefectCountOnFeatureText;
+}
+
+DefectCountOnSiteSearch = deterministic (6);
+
+DefectCountOnFeatureImages = deterministic(5);
+
+DefectCountOnFeatureText =  DefectCountOnText + DefectCountOnFeatureHTML + DefectCountOnFeatureDynamic;
+
+DefectCountOnText = deterministic (6);
+
+DefectCountOnFeatureHTML = deterministic(4);
+
+DefectCountOnFeatureDynamic = decision ("Feature Dynamic"){
+"Without Dynamic" : deterministic (0);
+"With Dynamic" : deterministic (4);
+}
+
+DefectCountOnFeatureAdServer = DefectCountOnAdServer 
++ DefectCountOnFeatureReports
++ DefectCountOnFeatureBanners 
++ DefectCountOnPopupsAndKeywordSupport;
+
+DefectCountOnAdServer = deterministic (6);
+
+DefectCountOnFeatureReports = deterministic (4);
+
+DefectCountOnFeatureBanners =  DefectCountOnBanners + DefectCountOnFeatureImage + DefectCountOnFeatureFlash;
+
+DefectCountOnBanners  = deterministic (2);
+
+DefectCountOnFeatureImage = deterministic (4);
+
+DefectCountOnFeatureFlash =  decision ("Flash"){
+"Without Flash" : deterministic (0);
+"With Flash" : deterministic(5);
+}
+
+DefectCountOnPopupsAndKeywordSupport = decision-subset(+)("Popups And Keyword Support"){
+"Popups" : DefectCountOnFeaturePopups;
+"Keyword Support" : DefectCountOnFeatureKeywordSupport;
+}
+
+DefectCountOnFeatureKeywordSupport =deterministic(5);
+
+DefectCountOnFeaturePopups = deterministic (0);
+
+DefectCountOnFeaturePersistence = DefectCountOnPersistence + DefectCountOnPersistenceSubFeatures;
+
+DefectCountOnPersistence = deterministic (0);
+
+DefectCountOnPersistenceSubFeatures = decision("Persistence Mechanism"){
+"XML" :  deterministic (0); 
+"Database" : deterministic (5);
+}
+
+DefectCountOnFeatureSecurity =  DefectCountOnSecurity + DefectCountOnSecuritySubFeatures;
+
+DefectCountOnSecurity = deterministic (0);
+
+DefectCountOnSecuritySubFeatures = decision-subset(+)("Security Mechanism"){
+"Data Storage" :  deterministic ( 3);
+"Data Transfer" : deterministic (4);
+"User Authentication" : deterministic (4);
+}
+
+DefectCountOnFeaturePerformance = DefectCountOnPerformance + DefectCountOnPerformanceSubFeatures;
+
+DefectCountOnPerformance = deterministic (0);
+
+DefectCountOnPerformanceSubFeatures = decision("Feature Performance"){
+"Milli Sec" :  deterministic (0);
+"Seconds" : deterministic (6);
+"Minutes" : deterministic (6);
+}
+
+
+//==============================FEATURE COUNT================
+FeatureCount =  FeatureWebServerCount + CountOfOtherServices;
+
+FeatureWebServerCount =  ProtocolAndLoggingCount +FeatureContentCount;
+
+ProtocolAndLoggingCount = decision-subset (+)("Protocol And Logging"){
+"Logging": FeatureLoggingCount;
+"Protocols" : FeatureProtocolsCount;
+}
+ 
+FeatureLoggingCount = decision ("Feature Logging"){
+"DB" : CountOfUsingDB;
+"File" : CountOfUsingFile;
+}
+
+CountOfUsingDB = deterministic (1);
+
+CountOfUsingFile = deterministic (1);
+
+FeatureProtocolsCount = decision-subset(+) ("Feature Protocol"){
+"NTTP" : deterministic (1);
+"FTP" : deterministic (1);
+"HTTPS" : deterministic (1);
+}
+
+FeatureContentCount = FeatureStaticCount + FeatureActiveCount;
+
+FeatureStaticCount = deterministic(1);
+
+FeatureActiveCount = decision-subset(+) ("Active Features"){
+"Active" : deterministic (1);
+"ASP": deterministic(1);
+"PHP": deterministic(1);
+"JSP": deterministic(1);
+"CGI": deterministic(1);
+}
+
+
+CountOfOtherServices = decision-subset(+)("Other Services"){
+"Additional Services": FeatureAdditionalServicesCount;
+"Security" : FeatureSecurityCount;
+"Persistence" : FeaturePersistenceCount;
+"Performance" : FeaturePerformanceCount;
+}
+
+FeatureAdditionalServicesCount = decision-subset(+)("Feature Additional Services"){
+"Additional Services" : deterministic(1);
+"Site Statistics" : FeatureSiteStatisticsCount;
+"Site Search" : FeatureSiteSearchCount;
+"Ad Server" : FeatureAdServerCount;
+}
+
+FeatureSiteStatisticsCount = FeatureStatisticsCount  + FeatureBasicStatCount + FeatureAdvancedStatCount;
+
+FeatureStatisticsCount =deterministic (1); 
+
+FeatureBasicStatCount = deterministic (1);
+
+FeatureAdvancedStatCount = decision ("Feature Advanced Stat"){
+"Without Advanced Stat" : deterministic (1);
+"With Advanced Stat" : deterministic (1);
+}
+FeatureSiteSearchCount = decision-subset (+)("Feature Site Search"){
+"Site Search" : SiteSearchCount;
+"Images" : FeatureImagesCount;
+"Text" : FeatureTextCount;
+}
+
+SiteSearchCount = deterministic (1);
+
+FeatureImagesCount = deterministic(1);
+
+FeatureTextCount =  TextCount + FeatureHTMLCount + FeatureDynamicCount;
+
+TextCount = deterministic (1);
+
+FeatureHTMLCount = deterministic(1);
+
+FeatureDynamicCount = decision ("Feature Dynamic"){
+"Without Dynamic" : deterministic (1);
+"With Dynamic" : deterministic (1);
+}
+
+FeatureAdServerCount = AdServerCount 
++ FeatureReportsCount
++ FeatureBannersCount 
++ PopupsAndKeywordSupportCount;
+
+AdServerCount = deterministic (1);
+
+FeatureReportsCount = deterministic (1);
+
+FeatureBannersCount =  BannersCount + FeatureImageCount + FeatureFlashCount;
+
+BannersCount  = deterministic (1);
+
+FeatureImageCount = deterministic (1);
+
+FeatureFlashCount =  decision ("Flash"){
+"Without Flash" : deterministic (1);
+"With Flash" : deterministic(1);
+}
+
+PopupsAndKeywordSupportCount = decision-subset(+)("Popups And Keyword Support"){
+"Popups" : FeaturePopupsCount;
+"Keyword Support" : FeatureKeywordSupportCount;
+}
+
+FeatureKeywordSupportCount =deterministic(1);
+
+FeaturePopupsCount = deterministic (1);
+
+FeaturePersistenceCount = PersistenceCount + PersistenceSubFeaturesCount;
+
+PersistenceCount = deterministic (1);
+
+PersistenceSubFeaturesCount = decision("Persistence Mechanism"){
+"XML" :  deterministic (1); 
+"Database" : deterministic (1);
+}
+
+FeatureSecurityCount =  SecurityCount + SecuritySubFeaturesCount;
+
+SecurityCount = deterministic (1);
+
+SecuritySubFeaturesCount = decision-subset(+)("Security Mechanism"){
+"Data Storage" :  deterministic ( 1);
+"Data Transfer" : deterministic (1);
+"User Authentication" : deterministic (1);
+}
+
+FeaturePerformanceCount = PerformanceCount + PerformanceSubFeaturesCount;
+
+PerformanceCount = deterministic (1);
+
+PerformanceSubFeaturesCount = decision("Feature Performance"){
+"Milli Sec" :  deterministic (1);
+"Seconds" : deterministic (1);
+"Minutes" : deterministic (1);
+}
+
+//========================USED BEFORE=========================
+
+FeaturesUsedBefore =  FeatureWebServerUsedBefore + UsedBeforeOfOtherServices;
+
+FeatureWebServerUsedBefore =  ProtocolAndLoggingUsedBefore +FeatureContentUsedBefore;
+
+ProtocolAndLoggingUsedBefore = decision-subset (+)("Protocol And Logging"){
+"Logging": FeatureLoggingUsedBefore;
+"Protocols" : FeatureProtocolsUsedBefore;
+}
+ 
+FeatureLoggingUsedBefore = decision ("Feature Logging"){
+"DB" : DBUsedBefore;
+"File" : FileUsedBefore;
+}
+
+DBUsedBefore = deterministic (1);
+
+FileUsedBefore = deterministic (0);
+
+FeatureProtocolsUsedBefore = decision-subset(+) ("Feature Protocol"){
+"NTTP" : deterministic (1);
+"FTP" : deterministic (1);
+"HTTPS" : deterministic (0);
+}
+
+FeatureContentUsedBefore = FeatureStaticUsedBefore + FeatureActiveUsedBefore;
+
+FeatureStaticUsedBefore = deterministic(1);
+
+FeatureActiveUsedBefore = decision-subset(+) ("Active Features"){
+"Active" : deterministic (0);
+"ASP": deterministic(0);
+"PHP": deterministic(1);
+"JSP": deterministic(1);
+"CGI": deterministic(1);
+}
+
+
+UsedBeforeOfOtherServices = decision-subset(+)("Other Services"){
+"Additional Services": FeatureAdditionalServicesUsedBefore;
+"Security" : FeatureSecurityUsedBefore;
+"Persistence" : FeaturePersistenceUsedBefore;
+"Performance" : FeaturePerformanceUsedBefore;
+}
+
+FeatureAdditionalServicesUsedBefore = decision-subset(+)("Feature Additional Services"){
+"Additional Services" : deterministic(1);
+"Site Statistics" : FeatureSiteStatisticsUsedBefore;
+"Site Search" : FeatureSiteSearchUsedBefore;
+"Ad Server" : FeatureAdServerUsedBefore;
+}
+
+FeatureSiteStatisticsUsedBefore = FeatureStatisticsUsedBefore  + FeatureBasicStatUsedBefore + FeatureAdvancedStatUsedBefore;
+
+FeatureStatisticsUsedBefore =deterministic (0); 
+
+FeatureBasicStatUsedBefore = deterministic (1);
+
+FeatureAdvancedStatUsedBefore = decision ("Feature Advanced Stat"){
+"Without Advanced Stat" : deterministic (0);
+"With Advanced Stat" : deterministic (1);
+}
+FeatureSiteSearchUsedBefore = decision-subset (+)("Feature Site Search"){
+"Site Search" : SiteSearchUsedBefore;
+"Images" : FeatureImagesUsedBefore;
+"Text" : FeatureTextUsedBefore;
+}
+
+SiteSearchUsedBefore = deterministic (1);
+
+FeatureImagesUsedBefore = deterministic(1);
+
+FeatureTextUsedBefore =  TextUsedBefore + FeatureHTMLUsedBefore + FeatureDynamicUsedBefore;
+
+TextUsedBefore = deterministic (1);
+
+FeatureHTMLUsedBefore = deterministic(1);
+
+FeatureDynamicUsedBefore = decision ("Feature Dynamic"){
+"Without Dynamic" : deterministic (0);
+"With Dynamic" : deterministic (1);
+}
+
+FeatureAdServerUsedBefore = AdServerUsedBefore 
++ FeatureReportsUsedBefore
++ FeatureBannersUsedBefore 
++ PopupsAndKeywordSupportUsedBefore;
+
+AdServerUsedBefore = deterministic (1);
+
+FeatureReportsUsedBefore = deterministic (1);
+
+FeatureBannersUsedBefore =  BannersUsedBefore + FeatureImageUsedBefore + FeatureFlashUsedBefore;
+
+BannersUsedBefore  = deterministic (1);
+
+FeatureImageUsedBefore = deterministic (1);
+
+FeatureFlashUsedBefore =  decision ("Flash"){
+"Without Flash" : deterministic (0);
+"With Flash" : deterministic(1);
+}
+
+PopupsAndKeywordSupportUsedBefore = decision-subset(+)("Popups And Keyword Support"){
+"Popups" : FeaturePopupsUsedBefore;
+"Keyword Support" : FeatureKeywordSupportUsedBefore;
+}
+
+FeatureKeywordSupportUsedBefore =deterministic(1);
+
+FeaturePopupsUsedBefore = deterministic (0);
+
+FeaturePersistenceUsedBefore = PersistenceUsedBefore + PersistenceSubFeaturesUsedBefore;
+
+PersistenceUsedBefore = deterministic (0);
+
+PersistenceSubFeaturesUsedBefore = decision("Persistence Mechanism"){
+"XML" :  deterministic (0); 
+"Database" : deterministic (1);
+}
+
+FeatureSecurityUsedBefore =  SecurityUsedBefore + SecuritySubFeaturesUsedBefore;
+
+SecurityUsedBefore = deterministic (0);
+
+SecuritySubFeaturesUsedBefore = decision-subset(+)("Security Mechanism"){
+"Data Storage" :  deterministic ( 1);
+"Data Transfer" : deterministic (1);
+"User Authentication" : deterministic (1);
+}
+
+FeaturePerformanceUsedBefore = PerformanceUsedBefore + PerformanceSubFeaturesUsedBefore;
+
+PerformanceUsedBefore = deterministic (0);
+
+PerformanceSubFeaturesUsedBefore = decision("Feature Performance"){
+"Milli Sec" :  deterministic (0);
+"Seconds" : deterministic (1);
+"Minutes" : deterministic (1);
+}
+
+
+Constraint "Security Mechanism" : "Data Transfer" requires "Feature Protocol": "HTTPS";
+Constraint "Feature Logging": "DB" requires "Persistence Mechanism" : "Database";
+Constraint "Feature Protocol": "HTTPS" excludes "Feature Performance" : "Milli Sec";
+Constraint "Feature Logging" : "File" requires "Feature Protocol" : "FTP";
+Constraint "Popups And Keyword Support" : "Keyword Support" requires "Feature Site Search" : "Text";
+Constraint "Feature Dynamic" : "With Dynamic" requires "Active Features": "Active";

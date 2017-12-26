@@ -28,9 +28,9 @@ import org.jfree.data.xy.XYSeriesCollection;
 import uk.ac.ucl.cs.radar.utilities.Helper;
 
 
-public class TwoDPlotter extends JFrame {
+public class TwoDJFramePlotter extends JFrame {
 	
-	public TwoDPlotter(){} 
+	public TwoDJFramePlotter(){} 
 	/**
      *Plots the scatter plot
      * @param semanticModel semantic model obtained from parsing.

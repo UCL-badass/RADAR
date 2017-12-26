@@ -1,0 +1,218 @@
+Model AmazonEC2;
+
+Objective Max ExpectedFeatureCountMonth = EV(FeatureCount);
+Objective Min ExpectedCostMonth = EV(TotalCostMonth);
+Objective Max ExpectedInstanceCores = EV(TotalInstanceCores );
+Objective Max ExpectedInstanceECU = EV(TotalInstanceECU);
+Objective Max ExpectedInstanceRAM = EV(TotalInstanceRAM);
+Objective Min ExpectedCostHour = EV(TotalCostHour);
+Objective Max ExpectedInstanceSSDBacked = EV(TotalInstanceBacked);
+
+//==========Modelling Richness==============
+
+FeatureCount = FeatureOSCount
+			+ FeatureBlockStorageCount
+			+ FeatureInstanceCount
+			+ FeatureDedicationCount
+			+ FeatureLocationCount
+			+ FeaturePurchaseCount;
+
+
+FeatureOSCount = decision ("OS"){
+	"Windows Based" : FeatureWindowBasedOSCount + FeatureWindowsBasedServerCount;
+	"Linux Based" : FeatureLinuxBasedOSCount ; 
+}
+FeatureWindowBasedOSCount = deterministic (1);
+FeatureWindowsBasedServerCount = FeatureWindowsServerCount + FeatureSQLServerCount;
+
+FeatureWindowsServerCount = deterministic (1);
+FeatureSQLServer =decision-subset(+)("Feature SQL Server"){
+	"SQL Server" :  FeatureSQLServerOptionCount;
+}
+FeatureSQLServerOptionCount = decision("SQL Server"){
+	"Web" : deterministic (1);
+	"Std" : deterministic (1);
+}
+FeatureLinuxBasedOSCount = decision ("Linux OS"){
+	"Suse" : deterministic (1);
+	"Amazon Linux" : deterministic (1);
+	"RedHat" : deterministic (1);
+}
+
+FeatureBlockStorageCount = decision-subset(+)("Feature Block Storage"){
+	"Block Storage" : FeatureBlockStorageOptionCount;
+}
+FeatureBlockStorageOptionCount =  decision ("Block Storage"){
+	"Std" : deterministic (1);
+	"SSD" :  deterministic (1);
+}
+FeatureInstanceCount = decision("Instance"){
+	"Memory Opt" : deterministic(1);
+	"General" : deterministic (1);
+	"Compute Opt" : deterministic (1);
+	"Storage Opt" : deterministic (1);
+	"GPU" : deterministic (1);
+}
+FeatureDedicationCount = decision ("Dedication"){
+	"Public" : deterministic (1);
+	"Ded" : deterministic (1);
+}
+FeatureLocationCount = decision ("Location"){
+	"Sau Paulo": deterministic (1);
+	"North America" : FeatureNorthAmericaCount;
+	"Asia Oceania" : FeatureAsiaOceaniaCount;
+	"IR" : deterministic (1);
+}
+FeatureNorthAmericaCount = decision ("North America"){
+	"VA" : deterministic (1);
+	"CA" : deterministic (1);
+	"OR" : deterministic (1);
+}
+FeatureAsiaOceaniaCount = decision ("Asia Oceania"){
+	"Sin" : deterministic (1);
+	"JP" : deterministic (1);
+	"Aus" : deterministic (1);
+}
+FeaturePurchaseCount = decision ("Purchase"){
+	"On Demand" : deterministic (1);
+	"Reserved" : FeatureReservedCount;
+}
+FeatureReservedCount = ReservedFeatureCount +  FeatureReservedSubFeatureCount;
+FeatureReservedSubFeatureCount = FeatureYearCount + FeatureModeCount;
+FeatureYearCount =  decision ("Years"){
+	"1Year" : deterministic (1);
+	"3Years" : deterministic (1);
+}
+FeatureModeCount =  decision ("Mode"){
+	"Light" : deterministic (1);
+	"Heavy" : deterministic (1);
+	"Med" : deterministic (1);
+}
+
+//==========Modelling CostMonth ==============
+
+TotalCostMonth = FeatureOSCostMonth
+			+ FeatureBlockStorageCostMonth
+			+ FeatureDedicationCostMonth
+			+ FeatureLocationCostMonth
+			+ FeaturePurchaseCostMonth;
+
+
+FeatureOSCostMonth = decision ("OS"){
+	"Windows Based" : FeatureWindowBasedOSCostMonth + FeatureWindowsBasedServerCostMonth;
+	"Linux Based" : FeatureLinuxBasedOSCostMonth ; 
+}
+FeatureWindowBasedOSCostMonth =triangular(800, 1000, 1200);
+
+FeatureWindowsBasedServerCostMonth = FeatureWindowsServerCostMonth + FeatureSQLServerCostMonth;
+
+FeatureWindowsServerCostMonth = triangular (400,500,600);
+FeatureSQLServerCostMonth =decision-subset(+)("Feature SQL Server"){
+	"SQL Server" :  FeatureSQLServerOptionCostMonth;
+}
+FeatureSQLServerOptionCostMonth = decision("SQL Server"){
+	"Web" : triangular (1300, 1500, 1700);
+	"Std" : triangular (2000, 2500, 3000);
+}
+FeatureLinuxBasedOSCostMonth = decision ("Linux OS"){
+	"Suse" : triangular (1500, 2000, 2500);
+	"Amazon Linux" : triangular (2000, 2500, 3000);
+	"RedHat" : triangular (1000, 1500, 2000);
+}
+
+FeatureBlockStorageCostMonth = decision-subset(+)("Feature Block Storage"){
+	"Block Storage" : FeatureBlockStorageOptionCostMonth;
+}
+FeatureBlockStorageOptionCostMonth =  decision ("Block Storage"){
+	"Std" : triangular (4500, 5000, 5500);
+	"SSD" :  triangular (9000, 10000, 11000);
+}
+FeatureDedicationCostMonth = decision ("Dedication"){
+	"Public" : triangular (8000, 10000, 12000);
+	"Ded" : triangular (15000, 20000, 25000);
+}
+FeatureLocationCostMonth = decision ("Location"){
+	"Sau Paulo": deterministic (100);
+	"North America" : FeatureNorthAmericaCostMonth;
+	"Asia Oceania" : FeatureAsiaOceaniaCostMonth;
+	"IR" : triangular (300, 500, 700);
+}
+FeatureNorthAmericaCostMonth = decision ("North America"){
+	"VA" : triangular (100, 150, 200);
+	"CA" : triangular (150, 180, 200);
+	"OR" : triangular (150, 200, 250);
+}
+FeatureAsiaOceaniaCostMonth = decision ("Asia Oceania"){
+	"Sin" : triangular (200, 250, 300);
+	"JP" : triangular (200, 270, 300);
+	"Aus" : triangular (100, 300, 500);
+}
+FeaturePurchaseCostMonth = decision ("Purchase"){
+	"On Demand" : triangular (800, 1000, 1200);
+	"Reserved" : FeatureReservedCostMonth;
+}
+FeatureReservedCostMonth = ReservedFeatureCostMonth +  FeatureReservedSubFeatureCostMonth;
+FeatureReservedSubFeatureCostMonth = FeatureYearCostMonth + FeatureModeCostMonth;
+FeatureYearCostMonth =  decision ("Years"){
+	"1Year" : triangular (800, 1000, 1200);
+	"3Years" : triangular (1000, 1500, 2000);
+}
+FeatureModeCostMonth =  decision ("Mode"){
+	"Light" : triangular (1000, 1500, 2000);
+	"Heavy" : triangular (6000, 7000, 8000);
+	"Med" : triangular (3000, 3500, 4000);
+}
+
+//==========Modelling Instance Cores ==============
+
+TotalInstanceCores = decision("Instance"){
+	"Memory Opt" : deterministic(8);
+	"General" : deterministic (16);
+	"Compute Opt" : deterministic (8);
+	"Storage Opt" : deterministic (16);
+	"GPU" : deterministic (32);
+}
+
+
+//==========Modelling Instance ECU ==============
+
+TotalInstanceECU = decision("Instance"){
+	"Memory Opt" : deterministic(12);
+	"General" : deterministic (36);
+	"Compute Opt" : deterministic (48);
+	"Storage Opt" : deterministic (60);
+	"GPU" : deterministic (108);
+}
+
+
+//==========Modelling Instance RAM ==============
+
+TotalInstanceRAM = decision("Instance"){
+	"Memory Opt" : deterministic(32);
+	"General" : deterministic (160);
+	"Compute Opt" : deterministic (64);
+	"Storage Opt" : deterministic (128);
+	"GPU" : deterministic (250);
+}
+
+//==========Modelling Cost  Hour ==============
+
+TotalCostHour = decision("Instance"){
+	"Memory Opt" : deterministic(5);
+	"General" : deterministic (15);
+	"Compute Opt" : deterministic (10);
+	"Storage Opt" : deterministic (8);
+	"GPU" : deterministic (20);
+}
+
+//==========Modelling Instance Backed ==============
+
+TotalInstanceBacked = decision("Instance"){
+	"Memory Opt" : deterministic(15);
+	"General" : deterministic (30);
+	"Compute Opt" : deterministic (60);
+	"Storage Opt" : deterministic (120);
+	"GPU" : deterministic (240);
+}
+
+

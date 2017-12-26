@@ -1,0 +1,221 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww13180\viewh10860\viewkind0
+\deftab720
+\pard\pardeftab720\sl320
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+Model BSS;\
+\
+Objective Max ExpectedCustomerSatisfaction = EV(CustomerSatisfaction);\
+Objective Min ExpectedCost = EV(Cost);\
+Objective Max ExpectedSecurity = EV(Security);\
+Objective Max ExpectedCapacity = EV(Capacity);\
+\
+//Modelling Customer Satisfaction\
+\
+CustomerSatisfaction = CustomerSatisfaction_Bike \
+				+ \'a0CustomerSatisfaction_DockStation \
+				+ \'a0CustomerSatisfaction_Users\
+				+  OtherCustomerSatisfaction;
+\f1 \expnd0\expndtw0\kerning0
+\
+
+\f0 \expnd0\expndtw0\kerning0
+\
+OtherCustomerSatisfaction = decision-subset(+) ("Other Satisfaction Options")\{\
+	"System Status" : CustomerSatisfaction_SystemStatus;\
+	"Maintenance " :  deterministic (15);\
+	"Redistribution" : CustomerSatisfaction_Redistribution;\
+\}\
+\
+CustomerSatisfaction_SystemStatus = decision-subset(+)("System Status")\{\
+	"RealTimeInfoWeb" : deterministic(10);\
+	"AllBikesNow" : deterministic(20);\
+\}\
+\
+//location and antitheses strategies..\
+\
+CustomerSatisfaction_Bike = decision-subset(+)("Bike")\{\
+	"Localisation" : CustomerSatisfaction_BikeLocalisation;\
+	"Bike Antithieves Strategies" : deterministic (5);\
+\}\
+\
+CustomerSatisfaction_BikeLocalisation = decision-subset(+)("Tracking Mechanism")\{\
+	"GPS" : deterministic(10);\
+	"RFID" : deterministic (15);\
+\}\
+\
+CustomerSatisfaction_DockStation = decision("Dock Station")\{\
+	"Fixed" : deterministic (17);\
+	"Fixed Portable" : deterministic (20);\
+	"Flexible" : deterministic (23);\
+\'a0\}\
+\
+CustomerSatisfaction_Redistribution= CustomerSatisfaction_Reward + SatisfactionOnRedistribution;\
+\'a0\
+SatisfactionOnRedistribution = deterministic(15);\
+\
+CustomerSatisfaction_Reward = decision ("Reward for Redistribution")\{\
+	"No Redistribution Reward" : deterministic(0);\
+	"With Redistribution Reward" : deterministic (5);\
+\}\
+\
+CustomerSatisfaction_Users = CustomerSatisfaction_AccessManagementSystem \
+					+ CustomerSatisfaction_UserRegistration;\
+\
+CustomerSatisfaction_AccessManagementSystem = decision-subset (+)("Access Management System")\{\
+	"Smart Card" : deterministic (25);\
+	"Smart Phone" : deterministic (20);\
+	"Key Card" : deterministic (30);\'a0\
+\}\
+\
+CustomerSatisfaction_UserRegistration = decision-subset (+)("User Registration")\{\
+	"Kiosk Registration" : CustomerSatisfaction_KioskUserRegistration;\
+	"Dock Station" : deterministic (20);\
+	"Web Registration" : deterministic (30);\'a0\
+\}\
+\
+CustomerSatisfaction_KioskUserRegistration = decision-subset (+)( "Kiosk Registration")\{\
+	"Touch Screen" : deterministic(5);\
+	"Key Card Reader" : deterministic(10);\
+	"Credit Card" : deterministic(12);\
+	"Card Dispenser" : deterministic(15);\
+\}\
+\
+// Modelling the Capacity\
+\
+Capacity =  decision("Dock Station")\{\
+	"Fixed" : deterministic (30);\
+	"Fixed Portable" : deterministic (35);\
+	"Flexible" : deterministic (40);\
+\'a0\}\
+\
+\
+// Modelling the Security
+\f1 \expnd0\expndtw0\kerning0
+\
+
+\f0 \expnd0\expndtw0\kerning0
+\
+Security = decision-subset(+) ("Security")\{\
+	"System Status" : Security_SystemStatus;\
+	"Bike" :  Security_Bike ;\
+	"Users" : Security_Users;\
+\}\
+\
+Security_SystemStatus = decision-subset(+)("System Status")\{\
+	"RealTimeInfoWeb" : deterministic(2);\
+	"AllBikesNow" : deterministic(5); \
+\}\
+\
+//location and antitheses strategies..\
+\
+Security_Bike  = decision-subset(+)("Bike")\{\
+	"Localisation" : Security_Localisation;\
+	"Bike Antithieves Strategies" : deterministic (4);\
+\}\
+\
+Security_Localisation = decision-subset(+)("Tracking Mechanism")\{\
+	"GPS" : deterministic(10);\
+	"RFID" : deterministic (15);\
+\}\
+\
+\
+Security_Users = Security_AccessManagementSystem + Security_UserRegistration;\
+\
+Security_AccessManagementSystem = decision-subset (+)("Access Management System")\{\
+	"Smart Card" : deterministic (1);\
+	"Smart Phone" : deterministic (2);\
+	"Key Card" : deterministic (3);\'a0\
+\}\
+\
+Security_UserRegistration = decision-subset (+)("User Registration")\{\
+	"Kiosk Registration" : Security_KioskUserRegistration;\
+	"Dock Station" : deterministic (1);\
+	"Web Registration" : deterministic (5);\'a0\
+\}\
+\
+Security_KioskUserRegistration = decision-subset (+)( "Kiosk Registration")\{\
+	"Touch Screen" : deterministic(2);\
+	"Key Card Reader" : deterministic(3);\
+	"Credit Card" : deterministic(4);\
+	"Card Dispenser" : deterministic(1);\
+\}\
+\
+\
+//Modelling Cost\
+Cost = Cost_Bike  + \'a0Cost_DockStation + \'a0Cost_Users + OtherCost;
+\f1 \expnd0\expndtw0\kerning0
+\
+
+\f0 \expnd0\expndtw0\kerning0
+\
+OtherCost= decision-subset(+) ("Other Cost Components")\{\
+	"System Status" : Cost_SystemStatus;\
+	"Maintenance " :  deterministic (10);\
+	"Redistribution" : Cost_Redistribution;\
+\}\
+\
+//location and antitheses strategies..\
+Cost_Bike = decision-subset(+)("Bike")\{\
+	"Localisation" : Cost_BikeLocalisation;\
+	"Bike Antithieves Strategies" : deterministic (7);\
+\}\
+\
+Cost_BikeLocalisation = decision-subset(+)("Tracking Mechanism")\{\
+	"GPS" : deterministic(10);\
+	"RFID" : deterministic (15);\
+\}\
+\
+Cost_DockStation = decision("Dock Station")\{\
+	"Fixed" : deterministic (30);\
+	"Fixed Portable" : deterministic (35);\
+	"Flexible" : deterministic (40);\
+\'a0\}\
+\
+Cost_SystemStatus = decision-subset(+)("System Status")\{\
+	"RealTimeInfoWeb" : deterministic(5);\
+	"AllBikesNow" : deterministic(10);\
+\}\
+\
+Cost_Redistribution= Cost_Reward + RedistributionCost;\
+\'a0\
+RedistributionCost = deterministic(10);\
+\
+Cost_Reward = decision ("Reward for Redistribution")\{\
+	"No Redistribution Reward" : deterministic(0);\
+	"With Redistribution Reward" : deterministic (10);\
+\}\
+\
+Cost_Users = Cost_AccessManagementSystem + Cost_UserRegistration;\
+\
+Cost_AccessManagementSystem = decision-subset (+)("Access Management System")\{\
+	"Smart Card" : deterministic (35);\
+	"Smart Phone" : deterministic (30);\
+	"Key Card" : deterministic (40);\'a0\
+\}\
+\
+Cost_UserRegistration = decision-subset (+)("User Registration")\{\
+	"Kiosk Registration" : Cost_KioskUserRegistration;\
+	"Dock Station" : deterministic (30);\
+	"Web Registration" : deterministic (40);\'a0\
+\}\
+\
+Cost_KioskUserRegistration = decision-subset (+)( "Kiosk Registration")\{\
+	"Touch Screen" : deterministic(15);\
+	"Key Card Reader" : deterministic(20);\
+	"Credit Card" : deterministic(22);\
+	"Card Dispenser" : deterministic(25);\
+\}\
+\
+Constraint "System Status" : "AllBikesNow" requires "Tracking Mechanism": "GPS";\
+Constraint "Bike" : "Bike Antithieves Strategies" requires "Tracking Mechanism" : "GPS";\
+Constraint "Kiosk Registration" : "Card Dispenser" requires \'a0"Access Management System" : "Key Card";\
+Constraint "Access Management System" : "Key Card" requires "Kiosk Registration" : "Key Card Reader";\
+Constraint "Access Management System" : "Key Card" requires "Kiosk Registration" : "Card Dispenser";\
+\
+\
+\
+}

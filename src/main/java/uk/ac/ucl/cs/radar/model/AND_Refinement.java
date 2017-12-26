@@ -15,6 +15,8 @@ class AND_Refinement extends Expression {
 	 * The variable that this ANDRef defines
 	 */
 	QualityVariable parent;
+	
+	Decision decisionAndRefReferTo;
 	/**
 	 * The arithmetic expression that defines this ANDRef
 	 */
@@ -123,6 +125,12 @@ class AND_Refinement extends Expression {
 	public double getParamExpressionValue(Model m) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	public void setDecisionAndRefReferTo (Decision d){
+		decisionAndRefReferTo =d;
+	}
+	public Decision getDecisionAndRefReferTo (){
+		return decisionAndRefReferTo;
 	}
 
 

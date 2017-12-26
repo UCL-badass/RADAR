@@ -1,0 +1,443 @@
+Model MicrosoftWord;
+Objective Max ENB= EV (NB);
+Objective Min ProjectRisk = Pr(Risk);
+NB = Value -Cost;
+
+Value = decision-subset (+)("Next Release"){
+	"NewFile": normalCI (10,20);
+	"OpenFile" : normalCI (30,40);
+	"CloseFile" : normalCI (10,30);
+	"SaveFile" : normalCI (70,80);
+	"Save As Different File" : normalCI (5,10);
+	"SearchFile" : normalCI (30,50);
+	"ProtectFile" : normalCI (10,50);
+	"PrintPreview" : normalCI (5,10);
+	"Print File" : normalCI (50,80);
+	"Send To" : normalCI (10,80);
+	"Set Properties" : triangular (10,20,70);
+	"Exit" : normalCI (30,90); 
+	"Undo Task" : normalCI (50,60);
+	"Redo Task" :  normalCI (20,60);
+	"Cut" : normalCI (60,70);
+	"Copy" : normalCI (60,70);
+	"Paste" : normalCI (30,60);
+	"Paste Special" : normalCI (20,40); 
+	"Go To" : normalCI (10,20);
+	"Find" : normalCI (40,50);
+	"Replace" : normalCI (50,60);
+	"Select All" : normalCI (10,90);
+	"Default" : normalCI (10,30);
+	"Print Layout" : normalCI (30,40);
+	"Web Layout" : normalCI (10,40);
+	"Zoom" : normalCI (10,50);
+	"Header Footer" : normalCI (30,90); 
+	"Page Numbers" : normalCI (20,90);
+	"Date Time" : normalCI (50,90);
+	"Symbol" : normalCI (30,90);
+	"Bookmark" : normalCI (20,60);
+	"Hyper Link" : normalCI (20,90);
+	"Font" : normalCI (40,90);
+	"Paragraph" : normalCI (30,90);
+	"Bullets Numbering" : normalCI (30,90);
+	"Change Case" : normalCI (10,80);
+	"Background" : normalCI (10,20); 
+	"Spell Check" : normalCI (60,90);
+	"Check Grammer" : normalCI (10,90);
+	"Speech" : normalCI (10,20);
+	"Mail Merge" : normalCI (10,70);
+	"Macro" : normalCI (10,60);
+	"Set Options" : normalCI (10,80); 
+	"Insert Table" : normalCI (40,90); 
+	"Delete Table" : normalCI (50,90);
+	"Table Format" : normalCI (50,90);
+	"Sort" : normalCI (30,90);
+	"Import Data" : normalCI (30,60); 
+	"Help" : normalCI (20,90); 
+	"Search" : normalCI (10,90);
+}
+
+Cost = ElicitationCost + DesignCost + DevCost + ExtToolDevCost + TestingCost;
+
+Risk = ( RiskExceedingElicitationCost
+			|| RiskExceedingDesignCost
+			|| RiskExceedingDevCost
+			|| RiskExceedingExtToolDevCost
+			|| RiskExceedingTestingCost
+		);
+		
+
+RiskExceedingElicitationCost = ElicitationCost > ElicitationBudget;
+ElicitationBudget = deterministic (150); 
+
+ElicitationCost = decision-subset (+)("Next Release"){
+	"NewFile": triangular (14,15,16);
+	"OpenFile" : triangular (17,18, 19);
+	"CloseFile" :  triangular (2,3, 4);
+	"SaveFile" :  triangular (12,15,17);
+	"Save As Different File" :  triangular (15, 16,17);
+	"SearchFile" :  triangular (19, 20, 21);
+	"ProtectFile" : triangular (4,5,6);
+	"PrintPreview" : triangular (13,15, 17);
+	"Print File" : triangular (11, 12, 13);
+	"Send To" : triangular (9, 10, 11);
+	"Set Properties" : triangular (3,5,7);
+	"Exit" : triangular (2,3,4); 
+	"Undo Task" : triangular (6,7,8);
+	"Redo Task" :  triangular (4,6,8);
+	"Cut" : triangular  (5,6,7);
+	"Copy" : triangular (3,5,7);
+	"Paste" : triangular (6,7, 8);
+	"Paste Special" : triangular (11,12,13); 
+	"Go To" : triangular (6,7,9);
+	"Find" : triangular (3,6,9);
+	"Replace" : triangular (3,5,7);
+	"Select All" : triangular (3,5,7); 
+	"Default" : triangular (2,4,6);
+	"Print Layout" :  triangular (2,4,6);
+	"Web Layout" :  triangular (2,4,6);
+	"Zoom" : triangular (4,6,8);
+	"Header Footer" : triangular (1,2,4);  
+	"Page Numbers" : triangular (1,2, 4);
+	"Date Time" : triangular (1,2, 4);
+	"Symbol" : triangular (1,2, 4);
+	"Bookmark" : deterministic (1);
+	"Hyper Link" : deterministic (1); 
+	"Font" : triangular (1,3,5);
+	"Paragraph" : triangular (3,5,7);
+	"Bullets Numbering" : triangular (2,4,6);
+	"Change Case" : triangular (2,4,6);
+	"Background" : triangular (2,4,6); 
+	"Spell Check" : triangular (6,8,10);
+	"Check Grammer" : triangular (7,9,11);
+	"Speech" : triangular (1,3,5);
+	"Mail Merge" : triangular (13,15,17);
+	"Macro" : triangular (10,12,14);
+	"Set Options" : triangular (1,3,5); 
+	"Insert Table" : triangular (3,5,7); 
+	"Delete Table" : triangular (2,4,6);
+	"Table Format" : triangular (5,7,9);
+	"Sort" : triangular (4,6,8);
+	"Import Data" : triangular (7,9,11); 
+	"Help" : triangular (1,2,4); 
+	"Search" : deterministic (1);
+}
+
+RiskExceedingDesignCost = DesignCost > DesignBudget;
+DesignBudget = deterministic (150); 
+DesignCost = decision-subset (+)("Next Release"){
+	"NewFile": triangular (15,17,19);
+	"OpenFile" : triangular (18, 20,22);
+	"CloseFile" :  triangular (3, 5,7);
+	"SaveFile" :  triangular (15,17,19);
+	"Save As Different File" :  triangular (12, 14, 16);
+	"SearchFile" :  triangular (16,18, 20);
+	"ProtectFile" : triangular (5,7,9);
+	"PrintPreview" : triangular (11,13,15);
+	"Print File" : triangular (8,10, 12);
+	"Send To" : triangular (7, 9, 11);
+	"Set Properties" : triangular (2,4,6);
+	"Exit" : triangular (1,2,4); 
+	"Undo Task" : triangular (3,5,7);
+	"Redo Task" :  triangular (4,7,8);
+	"Cut" : triangular  (4,7,8);
+	"Copy" : triangular (1,3,5);
+	"Paste" : triangular (2,4, 6);
+	"Paste Special" : triangular (8,10,12); 
+	"Go To" : triangular (3,5,7);
+	"Find" : triangular (4,5,7);
+	"Replace" : triangular (2,4,6);
+	"Select All" : triangular (2,4,6); 
+	"Default" : triangular (1,3,5);
+	"Print Layout" :  triangular (1,3,5);
+	"Web Layout" :  triangular (1,3,5);
+	"Zoom" : triangular (4,7,8);
+	"Header Footer" : triangular (1,3,5); 
+	"Page Numbers" : triangular (1,3, 5);
+	"Date Time" : triangular(1,3, 5);
+	"Symbol" : triangular (1,3, 5);
+	"Bookmark" : deterministic (1);
+	"Hyper Link" : deterministic (1); 
+	"Font" : triangular (1,4,5);
+	"Paragraph" : triangular (3,5,7);
+	"Bullets Numbering" : triangular (2,5,6);
+	"Change Case" : triangular (2,5,6);
+	"Background" : triangular (2,5,6); 
+	"Spell Check" : triangular (6,9,10);
+	"Check Grammer" : triangular (7,10,11);
+	"Speech" : triangular (1,4,5);
+	"Mail Merge" : triangular (13,14,17);
+	"Macro" : triangular (10,13,14);
+	"Set Options" : triangular (1,4,5); 
+	"Insert Table" : triangular (3,6,7); 
+	"Delete Table" : triangular (2,5,6);
+	"Table Format" : triangular (5,6,9);
+	"Sort" : triangular (4,5,8);
+	"Import Data" : triangular (7,8,11); 
+	"Help" : triangular (1,3,4); 
+	"Search" : deterministic (2);
+}
+
+RiskExceedingDevCost = DevCost > DevelopmentBudget;
+DevelopmentBudget = deterministic (200); 
+
+DevCost = decision-subset (+)("Next Release"){
+	"NewFile": triangular (19,22,25);
+	"OpenFile" : triangular (22,25,27);
+	"CloseFile" :  deterministic (1);
+	"SaveFile" :  triangular (17,18,19);
+	"Save As Different File" :  triangular(17,18,19);
+	"SearchFile" :  triangular (20,25, 27);
+	"ProtectFile" : triangular (2,4,6);
+	"PrintPreview" : triangular (11,13,15);
+	"Print File" : triangular (8,10, 12);
+	"Send To" : triangular (7, 8, 11);
+	"Set Properties" : triangular (4,6,8);
+	"Exit" : triangular (2,4,6); 
+	"Undo Task" : triangular (7,8,10);
+	"Redo Task" :  triangular  (7,8,10);
+	"Cut" : triangular  (7,8,10);
+	"Copy" : triangular (1,4,5);
+	"Paste" : triangular (4, 6,8);
+	"Paste Special" : triangular (8,10,12); 
+	"Go To" : triangular (3,6,7);
+	"Find" : triangular (4,5,7);
+	"Replace" : triangular (2,4,6);
+	"Select All" : triangular (2,4,6); 
+	"Default" : triangular (1,3,5);
+	"Print Layout" :  triangular (1,3,5);
+	"Web Layout" :  triangular (1,3,5);
+	"Zoom" :  triangular (4,5,8);
+	"Header Footer" : triangular (1,3,5); 
+	"Page Numbers" : triangular (1,3, 5);
+	"Date Time" : triangular(1,3, 5);
+	"Symbol" : triangular (1,3, 5);
+	"Bookmark" : deterministic (2);
+	"Hyper Link" : deterministic (2); 
+	"Font" : triangular (1,4,5);
+	"Paragraph" : triangular (3,6,7);
+	"Bullets Numbering" : triangular (2,5,6);
+	"Change Case" : triangular (2,5,6);
+	"Background" : triangular (2,5,6); 
+	"Spell Check" : triangular (9,10,12);
+	"Check Grammer" : triangular (10,11,13);
+	"Speech" : triangular (5,6,8);
+	"Mail Merge" : triangular (10, 13,14);
+	"Macro" : triangular (8,10,13);
+	"Set Options" : triangular (1,2,5);
+	"Insert Table" : triangular (3,4,7); 
+	"Delete Table" : triangular (2,3,6);
+	"Table Format" : triangular (5,6,9);
+	"Sort" : triangular (4,7,8);
+	"Import Data" : triangular (7,8,11); 
+	"Help" : triangular (1,3,4); 
+	"Search" : deterministic (2);
+}
+
+RiskExceedingExtToolDevCost = ExtToolDevCost > ExternalToolDevelopmentBudget;
+ExternalToolDevelopmentBudget = deterministic (75); 
+
+ExtToolDevCost = decision-subset (+)("Next Release"){
+	"NewFile": deterministic(0);
+	"OpenFile" : deterministic(0);
+	"CloseFile" :  deterministic(0);
+	"SaveFile" :  deterministic(0);
+	"Save As Different File" :  deterministic(0);
+	"SearchFile" :  deterministic(0);
+	"ProtectFile" : deterministic(0);
+	"PrintPreview" : deterministic(0);
+	"Print File" : deterministic(0);
+	"Send To" : deterministic(25);
+	"Set Properties" : deterministic(0);
+	"Exit" : deterministic(0); 
+	"Undo Task" : deterministic(0);
+	"Redo Task" :  deterministic(0);
+	"Cut" : deterministic(0);
+	"Copy" : deterministic(0);
+	"Paste" : deterministic(0);
+	"Paste Special" :  deterministic(25);
+	"Go To" : deterministic(0);
+	"Find" : deterministic(0);
+	"Replace" : deterministic(0);
+	"Select All" : deterministic(0); 
+	"Default" : deterministic(0);
+	"Print Layout" : deterministic(0);
+	"Web Layout" : deterministic(0);
+	"Zoom" : deterministic(0);
+	"Header Footer" : deterministic(0); 
+	"Page Numbers" : deterministic(0);
+	"Date Time" : deterministic(0);
+	"Symbol" : deterministic(0);
+	"Bookmark" : deterministic(0);
+	"Hyper Link" : deterministic(0); 
+	"Font" : deterministic(0);
+	"Paragraph" : deterministic(0);
+	"Bullets Numbering" : deterministic(0);
+	"Change Case" :deterministic(0);
+	"Background" : deterministic(0); 
+	"Spell Check" : deterministic(0);
+	"Check Grammer" : deterministic(0);
+	"Speech" :deterministic(0);
+	"Mail Merge" :  deterministic(25);
+	"Macro" :  deterministic(15);
+	"Set Options" :deterministic(0); 
+	"Insert Table" : deterministic(0);
+	"Delete Table" :deterministic(0);
+	"Table Format" : deterministic(0);
+	"Sort" : deterministic(0);
+	"Import Data" :  deterministic(20); 
+	"Help" : deterministic(0);
+	"Search" : deterministic(0);
+}
+
+RiskExceedingTestingCost = TestingCost > TestingBudget;
+TestingBudget = deterministic (150); 
+
+TestingCost = decision-subset (+)("Next Release"){
+	"NewFile": triangular (10,12,15);
+	"OpenFile" : triangular (12,13,17);
+	"CloseFile" :  deterministic (2);
+	"SaveFile" :  triangular (11,13,15);
+	"Save As Different File" :  triangular(15, 17,18);
+	"SearchFile" :  triangular (16,18, 20);
+	"ProtectFile" : triangular (2,3,6);
+	"PrintPreview" : triangular (9, 11,13);
+	"Print File" : triangular (8,10, 12);
+	"Send To" : triangular (7, 8, 11);
+	"Set Properties" : triangular (2, 4,6);
+	"Exit" : triangular (2,3,6); 
+	"Undo Task" : triangular (3,5,10);
+	"Redo Task" :  triangular  (2,4,8);
+	"Cut" : triangular  (3,4, 7);
+	"Copy" : triangular (1,3,5);
+	"Paste" : triangular (4, 6,8);
+	"Paste Special" : triangular (8,11,12);
+	"Go To" : triangular (3,5,7);
+	"Find" : triangular (2,3,7);
+	"Replace" : triangular (2,3,6);
+	"Select All" : triangular (2,3,6); 
+	"Default" : triangular (1,2,5);
+	"Print Layout" :  triangular (1,3,5);
+	"Web Layout" :  triangular (1,3,5);
+	"Zoom" :  triangular (4,7,8);
+	"Header Footer" : deterministic (1);  
+	"Page Numbers" :deterministic (1); 
+	"Date Time" : deterministic (1); 
+	"Symbol" : deterministic (1); 
+	"Bookmark" : deterministic (2);
+	"Hyper Link" : deterministic (1); 
+	"Font" : triangular (1,2,5);
+	"Paragraph" : triangular (3,6,7);
+	"Bullets Numbering" : triangular (2,5,6);
+	"Change Case" : triangular (2,5,6);
+	"Background" : triangular (2,5,6); 
+	"Spell Check" : triangular (8,9,10);
+	"Check Grammer" : triangular (6,8, 10);
+	"Speech" : triangular (2,4, 5);
+	"Mail Merge" : triangular (10, 13,14);
+	"Macro" : triangular (8,11,13);
+	"Set Options" : triangular (1,4,5); 
+	"Insert Table" : triangular (3,4,7); 
+	"Delete Table" : triangular (2,3,6);
+	"Table Format" : triangular (5,6,9);
+	"Sort" : triangular (4,5,8);
+	"Import Data" : triangular (7,8,11); 
+	"Help" : triangular (1,3,4); 
+	"Search" : deterministic (2);
+}
+
+Constraint "Next Release" : "OpenFile" couples "Next Release" : "SaveFile";
+Constraint "Next Release" : "Save As Different File" couples "Next Release" : "SaveFile";
+Constraint "Next Release" : "Cut" couples "Next Release" : "Paste";
+Constraint "Next Release" : "Cut" couples "Next Release" : "Paste Special";
+Constraint "Next Release" : "Header Footer" couples "Next Release" : "Page Numbers";
+
+Constraint "Next Release" : "Insert Table" couples "Next Release" : "Table Format";
+Constraint "Next Release" : "Insert Table" couples "Next Release" : "Delete Table";
+Constraint "Next Release" : "Help" couples "Next Release" : "Search";
+
+
+
+Constraint "Next Release" : "OpenFile" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Save As Different File" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "SearchFile" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "ProtectFile" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "PrintPreview" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Print File" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Send To" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Set Properties" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Exit" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Print Layout" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Web Layout" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Zoom" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Header Footer" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Spell Check" requires "Next Release" : "NewFile";
+Constraint "Next Release" : "Check Grammer" requires "Next Release" : "NewFile";
+
+
+
+
+Constraint "Next Release" : "CloseFile" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "SearchFile" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "ProtectFile" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "PrintPreview" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Print File" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Send To" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Set Properties" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Go To" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Find" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Print Layout" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Web Layout" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Zoom" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Header Footer" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Page Numbersr" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Date Time" requires "Next Release" : "OpenFile";
+Constraint "Next Release" : "Symbol" requires "Next Release" : "OpenFile";
+
+
+Constraint "Next Release" : "Exit" requires "Next Release" : "CloseFile";
+Constraint "Next Release" : "Exit" requires "Next Release" : "SaveFile";
+Constraint "Next Release" : "Exit" requires "Next Release" : "Save As Different File";
+Constraint "Next Release" : "Exit" requires "Next Release" : "SearchFile";
+Constraint "Next Release" : "Exit" requires "Next Release" : "ProtectFile";
+Constraint "Next Release" : "Exit" requires "Next Release" : "PrintPreview";
+Constraint "Next Release" : "Exit" requires "Next Release" : "Print File";
+Constraint "Next Release" : "Exit" requires "Next Release" : "Send To";
+Constraint "Next Release" : "Send To" requires "Next Release" : "ProtectFile";
+
+Constraint "Next Release" : "Redo Task" requires "Next Release" : "Undo Task";
+Constraint "Next Release" : "Paste" requires "Next Release" : "Go To";
+Constraint "Next Release" : "Replace" requires "Next Release" : "Go To";
+
+Constraint "Next Release" : "Print File" requires "Next Release" : "Print Layout";
+Constraint "Next Release" : "Print Layout" requires "Next Release" : "Header Footer";
+Constraint "Next Release" : "Web Layout" requires "Next Release" : "Header Footer";
+Constraint "Next Release" : "Bookmark" requires "Next Release" : "Page Numbers";
+Constraint "Next Release" : "Hyper Link" requires "Next Release" : "Page Numbers";
+Constraint "Next Release" : "Bookmark" requires "Next Release" : "Date Time";
+Constraint "Next Release" : "Hyper Link" requires "Next Release" : "Date Time";
+
+Constraint "Next Release" : "Paragraph" requires "Next Release" : "Font";
+Constraint "Next Release" : "Bullets Numbering" requires "Next Release" : "Font";
+Constraint "Next Release" : "Change Case" requires "Next Release" : "Font";
+Constraint "Next Release" : "Background" requires "Next Release" : "Font";
+
+Constraint "Next Release" : "Background" requires "Next Release" : "Paragraph";
+Constraint "Next Release" : "Background" requires "Next Release" : "Bullets Numbering";
+Constraint "Next Release" : "Background" requires "Next Release" : "Change Case";
+
+Constraint "Next Release" : "Check Grammer" requires "Next Release" : "Spell Check";
+Constraint "Next Release" : "Speech" requires "Next Release" : "Check Grammer";
+
+
+Constraint "Next Release" : "Spell Check" requires "Next Release" : "Set Options";
+Constraint "Next Release" : "Check Grammer" requires "Next Release" : "Set Options";
+Constraint "Next Release" : "Speech" requires "Next Release" : "Set Options";
+Constraint "Next Release" : "Mail Merge" requires "Next Release" : "Set Options";
+Constraint "Next Release" : "Macro" requires "Next Release" : "Set Options";
+
+
+
+
+
+
+

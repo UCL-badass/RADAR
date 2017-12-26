@@ -86,7 +86,11 @@ public class ScatterPlotPanel3D extends JPanel {
     	String chartTitle =   "Pareto front obtained for " + semanticModel.getModelName() + " model." ;
 		String Xlabel =   semanticModel.getObjectives().get(0).getLabel();
 		String Ylabel =   semanticModel.getObjectives().get(1).getLabel();
-		String Zlabel =   semanticModel.getObjectives().get(2).getLabel();
+		String Zlabel = "Nbr of Constraints";
+		if (semanticModel.getObjectives().size() >2){
+			 Zlabel =   semanticModel.getObjectives().get(2).getLabel();
+		}
+		
 		
 
     	
@@ -131,7 +135,7 @@ public class ScatterPlotPanel3D extends JPanel {
         for (int i =0; i < analysis_result.getShortListObjectives().size(); i ++){
         	x_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[0]);
         	y_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[1]);
-        	z_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[1]);
+        	z_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[2]);
         	a_nonDom = (float)Math.random();
             s.add(x_nonDom, y_nonDom, z_nonDom);
 		}
@@ -146,7 +150,7 @@ public class ScatterPlotPanel3D extends JPanel {
         for (int i =0; i < analysis_result.getEvaluatedObjectives().size(); i ++){
         	x_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[0]);
         	y_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[1]);
-        	z_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[1]);
+        	z_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[2]);
         	a_dom = (float)Math.random();
             s.add(x_dom, y_dom, z_dom);
 		}
@@ -169,7 +173,7 @@ public class ScatterPlotPanel3D extends JPanel {
         this.setAutoscrolls(true);
         this.setVisible(true);
         
-        //Helper.writeImageToFolder(outputpath  + "Figure/", Helper.getImage(this), "PNG", semanticModel.getModelName());
+        Helper.writeImageToFolder(outputpath  + "Figure/", Helper.getImage(this), "PNG", semanticModel.getModelName());
     }
     
 }

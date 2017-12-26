@@ -1,13 +1,16 @@
 package uk.ac.ucl.cs.radar.model;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import uk.ac.ucl.cs.radar.exception.CyclicDependencyException;
 import uk.ac.ucl.cs.radar.exception.ParameterDistributionException;
+
 /**
  * @author Saheed A. Busari and Emmanuel Letier
  */
@@ -27,37 +30,62 @@ public class OR_Refinement extends Expression {
 	/**
 	 * Stores a boolean value to determine whether this OR_Refinement has mutually exclusive options or non-mutually exclusive options
 	 */
-	private boolean mutuallyExclusiveOptions;
+	private boolean xor;
+	private String orOperationMode;
 	
 	public OR_Refinement(){
 		definition = new LinkedHashMap<String, AND_Refinement>();
+	}
+	
+	public void isXOR(boolean xor){
+		this.xor = xor;
+	}
+	public void orOperationMode(String orOperationMode){
+		this.orOperationMode = orOperationMode;
 	}
 	/**
 	 * Simulates a solution s.
 	 * @param s a solution to be simulated through monte-carlo simulation.
 	 * @return an array of simulated values.
 	 */
-	@Override
-	public double[] simulate(Solution s) {
+	/*@Override
+	public double[] simulate2(Solution s){
 		String option = s.selection(decision);
 		AND_Refinement and_ref = definition.get(option);
 		return and_ref.simulate(s);
-	}
+	}*/
 	/**
 	 * To be used for non-mutually exculusive selection
 	 * @param s
 	 * @return
 	 */
-	public double[] simulate2(Solution s) {
-		// get the list of options attached to a decision (implement this in solution class)
-		// initialise a 1 dim array (One[]) whose values are just 1.
-		// for each option get the AND-Refinement{
-		//	AND_Refinement and_ref = definition_.get(option);
-		//  double [] ans = and_ref.simulate(s)
-		//  One[i] = One[i] * ans[i];
-		// }
-		// return One[];
-		return new double[]{0};
+	@Override
+	public double[] simulate(Solution s) {
+		double [] result = new double[s.getSemanticModel().getNbr_Simulation()];
+		Arrays.fill(result, 0);
+		List<String> selections = s.selection(decision);
+		if ( selections != null && selections.size() > 0){
+			for (String option : s.selection(decision)){				
+				AND_Refinement and_ref = definition.get(option);
+				if (and_ref == null){
+					throw new RuntimeException("Ensure the option "+ option + " is spelt correctly through out its use in the model." );
+				}
+				double [] ans = and_ref.simulate(s);
+				if (xor){
+					result = ans;
+				}else{
+					for (int i=0; i < ans.length; i ++){
+						if(orOperationMode.equals("+")){
+							result[i] += ans[i];
+						}else{
+							result[i] *= ans[i];
+						}
+						
+					}
+				}
+			}
+		}
+		return result;
 	}
 	/**
 	 * Sets the decision for the OR_Refinement.
@@ -112,8 +140,8 @@ public class OR_Refinement extends Expression {
 	 * @param m semantic model obtained from parsing.
 	 * @return solutions from the leaf quality variables of the decision model constructed up to the point of this OR_Refinement, where solutions are combined.
 	 */
-	@Override
-	public SolutionSet getAllSolutions(Model m){
+	/*@Override
+	public SolutionSet getAllSolutions2(Model m){
 		SolutionSet result = new SolutionSet();
 		for (String option: this.decision.getOptions()){
 			AND_Refinement ref = definition.get(option);
@@ -131,40 +159,101 @@ public class OR_Refinement extends Expression {
 			
 		}
 		return result;
-	}
+	}*/
 	/**
-	 * To be used for non-mutually exculusive selection
+	 * Local solution set for this OR refinement
 	 * @param m
 	 * @return
 	 */
-	public SolutionSet getAllSolutions2(Model m){
-		SolutionSet result = new SolutionSet();
-		if (mutuallyExclusiveOptions == true){
-			for (String option: decision.getOptions()){
-				AND_Refinement ref = definition.get(option);
-				SolutionSet solutions = ref.getAllSolutions(m);
-				 if (solutions.isEmpty()){
+	public Map<String, SolutionSet> getLocalSolutions(Model m){
+		Map<String, SolutionSet> result =  new LinkedHashMap<String, SolutionSet>();
+		for (String option: decision.getOptions()){
+			AND_Refinement ref = definition.get(option);
+			SolutionSet solutions = ref.getAllSolutions(m);
+			SolutionSet solutionsSetPerOption = new SolutionSet();
+			 if (solutions.isEmpty()){
 	                Solution s = new Solution();
-	                s = s.addDecision(decision, option);
-	                result.add(s);
-		         }else {
+	                //s = s.addDecision(decision, option);
+	                s = s.addDecision(decision, Arrays.asList(option));
+	                solutionsSetPerOption.add(s);
+		     }else {
 	                for(Solution s: solutions.set()){
-	                    s = s.addDecision(decision, option);
-	                    result.add(s);
+	                    //s = s.addDecision(decision, option);
+	                    s = s.addDecision(decision, Arrays.asList(option));
+	                    solutionsSetPerOption.add(s);
 	                }
-		         }
-			}
+		     }
+			 result.put(option, solutionsSetPerOption);
+		}
+		return result;
+		
+	}
+	/**
+	 * Add the solutions set obtained for each ANDRefinemnet corresponding to each option
+	 * @param localSolutionSet
+	 * @return
+	 */
+	SolutionSet allLocalSolutionSet (Map<String, SolutionSet> localSolutionSet){
+		SolutionSet allLocalSolutions = new SolutionSet();
+		for(Map.Entry<String, SolutionSet> entry: localSolutionSet.entrySet()){
+			allLocalSolutions.addAll(entry.getValue());
+		}
+		return allLocalSolutions;
+	}
+	/**
+	 * To be used for non-mutually exculusive and mutually exclusive selection
+	 * @param m
+	 * @return
+	 */
+	public SolutionSet getAllSolutions(Model m){
+		SolutionSet result = new SolutionSet();
+		Map<String, SolutionSet> localSolutionSet =  getLocalSolutions(m);
+		if (xor){
+			result = allLocalSolutionSet(localSolutionSet);
 		}else{
-			// get the size of the options
-			// generate the bit array for selecting an option
-			// for each row A of the generated matrix  
-			//     Initialise main solution set SS
-			//     for each element in A
-			//         Initialise a solution set S
-			//         for each option to be selected
-			//			 get the AND-Ref and its solution set ss
-			//           S.add(ss)
-			//	   SS.add(S);
+			List<String> decisionOptionsInBitFors = getBitVector(decision.getOptions().size());
+			for (String subSetOfOptionsInBitForm : decisionOptionsInBitFors){
+				List<String> subSetOfOptions = getOptionFromBit(subSetOfOptionsInBitForm);
+				SolutionSet combinedSubsetOfOptions  = new SolutionSet();
+				for(String option: subSetOfOptions){
+					for (Map.Entry<String, SolutionSet> entry: localSolutionSet.entrySet()){
+						if(option.equals(entry.getKey())){
+							combinedSubsetOfOptions.addAll(entry.getValue());
+						}
+					}
+				}
+				if (combinedSubsetOfOptions.isEmpty()){
+					Solution s = new Solution();
+	                s = s.addDecision(decision, subSetOfOptions);
+	                result.add(s);
+				}
+				for(Solution s: combinedSubsetOfOptions.set()){
+                    s = s.addDecision(decision, subSetOfOptions);
+                    // NB: had to override the equals method in Solution class to allow addition of Solutions with same decision name
+                    result.add(s);
+                }
+			}
+		}
+		return result;
+	}
+	List<String> getOptionFromBit (String bit){
+		List<String> result =  new ArrayList<String>();
+		char [] bitArray =  bit.toCharArray();
+		for (int i =0; i < bitArray.length; i ++){
+			if (bitArray[i] == '1'){
+				result.add(decision.getOptions().get(i));
+			}
+		}
+		return result;
+	}
+	List<String> getBitVector(int nbrOptions){
+		List<String> result = new ArrayList<String>();
+		
+		for (int i=0; i < Math.pow(2, nbrOptions); i ++){
+			BigInteger bit =  new BigInteger (""+i);
+			String record =  bit.toString(2);
+			String paddedRecord = StringUtils.leftPad(record, nbrOptions, '0');
+			result.add(paddedRecord);
 		}
 		return result;
 	}

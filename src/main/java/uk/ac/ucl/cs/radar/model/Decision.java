@@ -3,11 +3,15 @@ package uk.ac.ucl.cs.radar.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.ucl.cs.radar.model.DecisionType;
+
 public class Decision {
 	
 	private String decisionLabel;
 	
 	private List<String> options;
+	
+	private DecisionType decisionType;
 	
 	public Decision(){
 		options = new ArrayList<String>();
@@ -66,5 +70,11 @@ public class Decision {
 
 	public int hashCode(){
 		return decisionLabel.hashCode();
+	}
+	public DecisionType getDecisionType (){
+		return decisionType;
+	}
+	public void setDecisionType (DecisionType decisionType){
+		this.decisionType= decisionType;
 	}
 }

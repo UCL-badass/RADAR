@@ -32,13 +32,16 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.JTextArea;
+
 import uk.ac.ucl.cs.radar.model.AnalysisResult;
 import uk.ac.ucl.cs.radar.model.Model;
 import uk.ac.ucl.cs.radar.model.ModelSolver;
 import uk.ac.ucl.cs.radar.model.Parser;
+import uk.ac.ucl.cs.radar.sbse.SbseParameter;
 import uk.ac.ucl.cs.radar.utilities.ConfigSetting;
 import uk.ac.ucl.cs.radar.utilities.GraphViz;
 import uk.ac.ucl.cs.radar.utilities.Helper;
+import uk.ac.ucl.cs.radar.utilities.InputValidator;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
@@ -76,6 +79,9 @@ import java.awt.Color;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 //import com.github.jabbalaci.graphviz.GraphViz;
+
+
+
 
 
 
@@ -212,6 +218,8 @@ public class RADAR_GUI implements PropertyChangeListener {
 	private JButton btnBrowseExecutablePath;
 	private JMenu mnView;
 	private JMenuItem mntmMaximise;
+	private SbseParameter sbseParameter;
+	private boolean useSbse;
 	/**
 	 * Launch the application.
 	 */
@@ -714,25 +722,36 @@ public class RADAR_GUI implements PropertyChangeListener {
                 setProgress(Math.min(progress, 100));
                 // perform analysis
                 while (progress < 100 && !isCancelled()) {
+                	boolean appendConsoleMessage =false;
                 	if (analysisIndex == -1){
                 		consoleTextArea.append("Checking cyclic dependencies in the model...... ");
+                		appendConsoleMessage =true;
                 	}
-                    if (analysisIndex == 0){
-                    	consoleTextArea.append("Analysis Step "+ (analysisIndex+1) +": Generating design space...... ");
+                    if (analysisIndex == 0 && !useSbse){
+                    	String msg ="Analysis Step "+ (analysisIndex+1) +": Generating design space...... ";
+                    	consoleTextArea.append(msg);
+                    	appendConsoleMessage =true;
                     }
-                    if (analysisIndex == 1){
-                    	consoleTextArea.append("Analysis Step "+ (analysisIndex+1) + ": Simulating the design space...... ");
+                    if (analysisIndex == 1 && !useSbse) {
+                    	String msg = "Analysis Step "+ (analysisIndex+1) + ": Simulating the design space...... ";
+                    	consoleTextArea.append(msg);
+                    	appendConsoleMessage = true;
                     }
                     if (analysisIndex == 2){
-                    	consoleTextArea.append("Analysis Step "+ (analysisIndex+1) + ": Shortlisting Pareto optimal solutions...... ");
+                    	String msg = "Analysis Step "+ (analysisIndex+1) + ": Shortlisting Pareto optimal solutions...... ";
+                    	consoleTextArea.append(useSbse == true?"Shortlisting Pareto optimal solutions......" :msg);
+                    	appendConsoleMessage = true;
                     }
                     if (analysisIndex == 3){
-                    	consoleTextArea.append("Analysis Step "+ (analysisIndex+1) + ": Computing expected value of information...... ");
+                    	String msg = "Analysis Step "+ (analysisIndex+1) + ": Computing expected value of information...... ";
+                    	consoleTextArea.append(useSbse == true?"Computing expected value of information......" :msg);
+                    	appendConsoleMessage = true;
                     }
                 	setProgress(Math.min(progress, 100));
                 	Thread.sleep(1000);
-                    tempResult = ModelSolver.solve(semanticModel, tempResult, analysisIndex);
-                    consoleTextArea.append(tempResult.getConsoleMessage()+"");
+                	//outPutDirectory
+                    tempResult = ModelSolver.solve(semanticModel, tempResult, analysisIndex, useSbse,sbseParameter,"");
+                    consoleTextArea.append(appendConsoleMessage==true?tempResult.getConsoleMessage()+"":"");
                     progress += 20;
                     setProgress(Math.min(progress, 100));
                     analysisIndex++;
@@ -1480,8 +1499,17 @@ public class RADAR_GUI implements PropertyChangeListener {
 		frame.setTitle("RADAR- Requirements engineering And Architecture Decisions Analyser");
 		
 		outPutDirectory = RADAR_GUI.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		outPutDirectory = UserInterfaceUtility.processJarLocationPath(outPutDirectory);
-	
+		outPutDirectory = Helper.processJarLocationPath(outPutDirectory);
+		
+		useSbse = true;
+		sbseParameter = new SbseParameter();
+		sbseParameter.setAlgorithmName("NSGAII");
+		sbseParameter.setCrossOverProbability(0.9);
+		sbseParameter.setMutationProbability(0.1);
+		sbseParameter.setPopulationSize(100);
+		sbseParameter.setMaximumEvaluation(50000);
+		sbseParameter.addConstraintAsObjective(true);
+		
 		undoManager = new UndoManager();
 		
 		JMenuBar menuBar = new JMenuBar();

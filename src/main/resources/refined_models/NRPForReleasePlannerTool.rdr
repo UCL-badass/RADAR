@@ -1,0 +1,344 @@
+Model ReleasePlanner;
+Objective Max ExpectedNetBenefit= EV (NB);
+Objective Min ProjectRisk = Pr(Risk);
+//Objective Min Risk= Pr (NB < 0);
+Objective Max ExpectedFrequencyOfUse = EV (FrequencyOfUse);
+Objective Min ExpectedDissatisfaction = EV(Dissatisfaction);
+Objective Min ExpectedRequirementVolatility = EV (Volatility);
+
+NB = Value - Cost;
+
+Value = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : normalCI (200,400);
+	"Grouping of features" : normalCI (100,200);
+	"Pre-assignments" : normalCI (300,600);
+	"Feature dependencies" : normalCI (600,700);
+	"Feasibility analysis" : normalCI (200,500); 
+	"Flexible number of releases" : normalCI (200,400);
+	"Flexible number and type of criteria" : normalCI (200,600);
+	"Fexible number and type of resources" : normalCI (100,900);
+	"Type 1 Stakekholder consensus driven planning" :  normalCI (100,200);
+	"Type 2 Financially driven planning" :  normalCI (800,900); 
+	"Ranking of features based on different criteria" : normalCI (200,400); 
+	"Similarity analysis" : normalCI (200,900);
+	"Dual charts combining ranking and disagreement analysis" : normalCI (200,400); 
+	"Comparison of priorities between groups of stakeholders" : normalCI (100,300);
+	"Import manual plan" : normalCI (400,500);
+	"Import of project data" :  triangular (400,500,900);
+	"Re-import of updated project data" :  triangular (200, 400, 800);
+	"Export of plans and project data" : normalCI (200,900);
+	"Export of generated analysis charts" : triangular (200, 400, 600);   
+	"Trade-off analysis" : normalCI (300,900);
+	"Estimated stakeholder satisfaction analysis" : normalCI (200,900);
+	"Consensus analysis between alternative plans" : normalCI (100,500);
+	"Structure of alternative plans" : normalCI (200,300);
+	"Quality evaluation of alternative plans" : normalCI (100,400);
+	"Resource evaluation of alternative plans" : normalCI (100,900); 
+}
+
+FrequencyOfUse = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : normalCI (1,9);
+	"Grouping of features" : normalCI (1,7);
+	"Pre-assignments" : normalCI (1,9);
+	"Feature dependencies" : normalCI (1,6);
+	"Feasibility analysis" : normalCI (4,7); 
+	"Flexible number of releases" : normalCI (1,9);
+	"Flexible number and type of criteria" : normalCI (1,9);
+	"Fexible number and type of resources" : normalCI (1,9);
+	"Type 1 Stakekholder consensus driven planning" :  normalCI (1,9);
+	"Type 2 Financially driven planning" :  normalCI (1,9); 
+	"Ranking of features based on different criteria" : normalCI (1,9); 
+	"Similarity analysis" : normalCI (1,3);
+	"Dual charts combining ranking and disagreement analysis" : normalCI (1,6); 
+	"Comparison of priorities between groups of stakeholders" : triangular(1,1,9);
+	"Import manual plan" : normalCI (1,9);
+	"Import of project data" :  normalCI (1,7);
+	"Re-import of updated project data" :  normalCI (1,6);
+	"Export of plans and project data" : triangular(1,1,4);
+	"Export of generated analysis charts" :normalCI (1,7); 
+	"Trade-off analysis" : normalCI (2,8);
+	"Estimated stakeholder satisfaction analysis" : normalCI (1,6);
+	"Consensus analysis between alternative plans" : normalCI (1,9);
+	"Structure of alternative plans" : normalCI (1,9);
+	"Quality evaluation of alternative plans" : normalCI (3,9);
+	"Resource evaluation of alternative plans" : normalCI (1,6); 
+}
+
+Dissatisfaction = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : normalCI (1,9);
+	"Grouping of features" : normalCI (1,8);
+	"Pre-assignments" : normalCI (1,9);
+	"Feature dependencies" : normalCI (1,5);
+	"Feasibility analysis" : normalCI (1, 4); 
+	"Flexible number of releases" : normalCI (1,9);
+	"Flexible number and type of criteria" : normalCI (1,9);
+	"Fexible number and type of resources" : normalCI (1,9);
+	"Type 1 Stakekholder consensus driven planning" :  normalCI (1,2);
+	"Type 2 Financially driven planning" :  normalCI (1,9); // end of B
+	"Ranking of features based on different criteria" : normalCI (1,5); 
+	"Similarity analysis" : normalCI (1,7);
+	"Dual charts combining ranking and disagreement analysis" : normalCI (1,5); 
+	"Comparison of priorities between groups of stakeholders" : normalCI (1,6);
+	"Import manual plan" : normalCI (1,7);
+	"Import of project data" :  normalCI (1,9);
+	"Re-import of updated project data" :  normalCI (1,9);
+	"Export of plans and project data" : triangular(1,1,6);
+	"Export of generated analysis charts" :normalCI (1,9); 
+	"Trade-off analysis" : normalCI (1,9);
+	"Estimated stakeholder satisfaction analysis" : normalCI (1,4);
+	"Consensus analysis between alternative plans" : normalCI (1,6);
+	"Structure of alternative plans" : normalCI (1,7);
+	"Quality evaluation of alternative plans" : normalCI (1,9);
+	"Resource evaluation of alternative plans" : triangular (1,7,9); 
+}
+
+Volatility = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : normalCI (1,4);
+	"Grouping of features" : normalCI (3,8);
+	"Pre-assignments" : normalCI (7,9);
+	"Feature dependencies" : normalCI (5,7);
+	"Feasibility analysis" : normalCI (5,6); 
+	"Flexible number of releases" : normalCI (6,8);
+	"Flexible number and type of criteria" : normalCI (3,7);
+	"Fexible number and type of resources" : normalCI (7,8);
+	"Type 1 Stakekholder consensus driven planning" :  normalCI (8,9);
+	"Type 2 Financially driven planning" :  normalCI (6,8); 
+	"Ranking of features based on different criteria" : normalCI (7,9); 
+	"Similarity analysis" : normalCI (4,6);
+	"Dual charts combining ranking and disagreement analysis" : normalCI (4,7); 
+	"Comparison of priorities between groups of stakeholders" : normalCI (4,7);
+	"Import manual plan" : normalCI (3,8);
+	"Import of project data" :  triangular (2,6,7);
+	"Re-import of updated project data" :  normalCI (1,9);
+	"Export of plans and project data" : triangular(1,1,6);
+	"Export of generated analysis charts" :normalCI (6,7); 
+	"Trade-off analysis" : normalCI (7, 8);
+	"Estimated stakeholder satisfaction analysis" : normalCI (4,5);
+	"Consensus analysis between alternative plans" : normalCI (7,8);
+	"Structure of alternative plans" : normalCI (6,8);
+	"Quality evaluation of alternative plans" : normalCI (8,9);
+	"Resource evaluation of alternative plans" : normalCI (7,8); 
+}
+
+Cost = BackEndDevCost 
+		+ FrontEndDevCost
+		+ TestingCost 
+		+ ProjectManagementCost 
+		+ QACost 
+		+ RequirementAnalysisCost;
+
+Risk = ( RiskExceedingBackEndDevCost
+			|| RiskExceedingFrontEndDevCost
+			|| RiskExceedingTestingCost
+			|| RiskExceedingProjectManagementCost
+			|| RiskExceedingRequirementAnalysisCost
+		);
+
+RiskExceedingBackEndDevCost = BackEndDevCost > BackedDevBudget;
+BackedDevBudget = deterministic (2000); 
+
+BackEndDevCost = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : triangular (100, 150, 200);
+	"Grouping of features" : triangular (350, 400, 450);
+	"Pre-assignments" : triangular (50, 75, 100);
+	"Feature dependencies" : triangular (400, 450, 500);
+	"Feasibility analysis" : triangular (350, 400, 450);
+	"Flexible number of releases" :  triangular (350, 400, 450);
+	"Flexible number and type of criteria" :  triangular (550, 575, 600);
+	"Fexible number and type of resources" :  triangular (400, 450, 500);
+	"Type 1 Stakekholder consensus driven planning" :   triangular (80, 100, 120);
+	"Type 2 Financially driven planning" :   triangular (150, 200, 250); 
+	"Ranking of features based on different criteria" :  triangular (350, 400, 450);
+	"Similarity analysis" :  triangular (100, 150, 200);
+	"Dual charts combining ranking and disagreement analysis" : triangular (50, 75, 100);
+	"Comparison of priorities between groups of stakeholders" : triangular (40, 50, 60);
+	"Import manual plan" : triangular (50, 60, 80);
+	"Import of project data" :  triangular (50, 75, 100);
+	"Re-import of updated project data" :  deterministic (0);
+	"Export of plans and project data" :triangular (200, 250, 300);
+	"Export of generated analysis charts" : triangular (150, 200, 250);
+	"Trade-off analysis" : triangular (40, 50, 60);
+	"Estimated stakeholder satisfaction analysis" : triangular (80, 100, 120);
+	"Consensus analysis between alternative plans" : triangular (80, 100, 120);
+	"Structure of alternative plans" : deterministic (0);
+	"Quality evaluation of alternative plans" : triangular (150, 200, 250);
+	"Resource evaluation of alternative plans" : triangular (80, 100, 120); 
+}
+
+
+RiskExceedingFrontEndDevCost = FrontEndDevCost > FrontEndDevBudget;
+FrontEndDevBudget = deterministic (1104); 
+
+FrontEndDevCost = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : triangular (150, 200, 250);
+	"Grouping of features" : triangular (250, 300, 350);
+	"Pre-assignments" : triangular (100, 120, 140);
+	"Feature dependencies" : triangular (300, 350, 400);
+	"Feasibility analysis" : triangular (160, 180, 200);
+	"Flexible number of releases" :  triangular (100, 120, 140);
+	"Flexible number and type of criteria" :  triangular (400, 420, 450);
+	"Fexible number and type of resources" :  triangular (10, 30, 50);
+	"Type 1 Stakekholder consensus driven planning" :    triangular (10, 30, 50);
+	"Type 2 Financially driven planning" :   triangular (30, 40, 50); 
+	"Ranking of features based on different criteria" :  triangular (40, 50, 60);
+	"Similarity analysis" :  triangular (30, 40, 50);
+	"Dual charts combining ranking and disagreement analysis" : triangular (160, 180, 200);
+	"Comparison of priorities between groups of stakeholders" : triangular (10, 30, 50);
+	"Import manual plan" : triangular (5, 10, 15);
+	"Import of project data" :  triangular (50, 75, 100);
+	"Re-import of updated project data" :  deterministic (0);
+	"Export of plans and project data" :triangular (80, 100, 120);
+	"Export of generated analysis charts" : triangular (80, 100, 120) ; 
+	"Trade-off analysis" : triangular (40, 60, 80);
+	"Estimated stakeholder satisfaction analysis" : triangular (80, 100, 120);
+	"Consensus analysis between alternative plans" : triangular (30, 40, 50);
+	"Structure of alternative plans" : triangular (50, 60, 70);
+	"Quality evaluation of alternative plans" : triangular (50, 70, 90);
+	"Resource evaluation of alternative plans" : triangular (80, 90, 100); 
+}
+
+RiskExceedingTestingCost = TestingCost > TestingBudget;
+TestingBudget = deterministic (2160); 
+
+TestingCost = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : triangular (100, 120, 150);
+	"Grouping of features" : triangular (120, 150, 200);
+	"Pre-assignments" : triangular (8, 10, 12);
+	"Feature dependencies" : triangular (350, 375, 400);
+	"Feasibility analysis" : triangular (250, 300, 350);
+	"Flexible number of releases" :  triangular (80, 100, 120);
+	"Flexible number and type of criteria" :  triangular (380, 400, 450);
+	"Fexible number and type of resources" :  triangular (80, 100, 120);
+	"Type 1 Stakekholder consensus driven planning" :   triangular (380, 400, 450);
+	"Type 2 Financially driven planning" :  triangular (380, 400, 450); 
+	"Ranking of features based on different criteria" : triangular (80, 100, 120);
+	"Similarity analysis" :  triangular (380, 400, 450); 
+	"Dual charts combining ranking and disagreement analysis" : triangular (200, 225, 250);
+	"Comparison of priorities between groups of stakeholders" : triangular (200, 250, 300);
+	"Import manual plan" : triangular (100, 120, 140);
+	"Import of project data" :  triangular (250, 300, 350);
+	"Re-import of updated project data" :  triangular (80, 100, 250);
+	"Export of plans and project data" :triangular (350, 400, 450);
+	"Export of generated analysis charts" : triangular (200, 250, 300) ; 
+	"Trade-off analysis" : triangular (250, 300, 350);
+	"Estimated stakeholder satisfaction analysis" : triangular (100, 150, 200);
+	"Consensus analysis between alternative plans" : triangular (200, 250, 300);
+	"Structure of alternative plans" : triangular (80, 100, 120);
+	"Quality evaluation of alternative plans" : triangular (100, 150, 200);
+	"Resource evaluation of alternative plans" : triangular (250, 300, 350); 
+}
+
+RiskExceedingProjectManagementCost = ProjectManagementCost > ProjectManagementBudget;
+ProjectManagementBudget = deterministic (1060); 
+
+ProjectManagementCost = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : deterministic(0);
+	"Grouping of features" : triangular (120, 150, 200);
+	"Pre-assignments" : deterministic(0);
+	"Feature dependencies" : triangular (100, 125, 150);
+	"Feasibility analysis" : triangular(40, 50, 60);
+	"Flexible number of releases" :  deterministic(0);
+	"Flexible number and type of criteria" :  triangular (150, 200, 250);
+	"Fexible number and type of resources" :  triangular (40, 50, 70);
+	"Type 1 Stakekholder consensus driven planning" :   triangular (80, 100, 150);
+	"Type 2 Financially driven planning" :  triangular (100, 150, 200); 
+	"Ranking of features based on different criteria" : triangular (80, 100, 120);
+	"Similarity analysis" :  triangular (100, 125, 150); 
+	"Dual charts combining ranking and disagreement analysis" : triangular(200, 225, 250);
+	"Comparison of priorities between groups of stakeholders" : triangular (100, 140, 150);
+	"Import manual plan" : triangular (100, 120, 140);
+	"Import of project data" :  triangular (110, 120, 150);
+	"Re-import of updated project data" :  triangular (120, 150, 200);
+	"Export of plans and project data" :triangular (300, 400, 500);
+	"Export of generated analysis charts" : triangular (200, 250, 300) ; 
+	"Trade-off analysis" : triangular (200, 250, 300);
+	"Estimated stakeholder satisfaction analysis" : triangular (80, 100, 120);
+	"Consensus analysis between alternative plans" : triangular ( 90, 100, 110);
+	"Structure of alternative plans" : triangular (200, 250, 300);
+	"Quality evaluation of alternative plans" : deterministic(0);
+	"Resource evaluation of alternative plans" : triangular (150, 200, 250); 
+}
+
+RiskExceedingQACost = QACost > QABudget;
+QABudget = deterministic (1680); 
+
+QACost = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : triangular (150, 200, 250);
+	"Grouping of features" : triangular (150, 200, 250);
+	"Pre-assignments" : triangular (50, 75, 100);
+	"Feature dependencies" : triangular (450, 500, 550);
+	"Feasibility analysis" : triangular(350, 400, 450);// end A
+	"Flexible number of releases" :  triangular(150, 200, 250);
+	"Flexible number and type of criteria" :  triangular (200, 250, 300);
+	"Fexible number and type of resources" :  triangular (350, 400, 450);
+	"Type 1 Stakekholder consensus driven planning" :   triangular (30, 40, 50);
+	"Type 2 Financially driven planning" :  triangular (30, 50, 70); 
+	"Ranking of features based on different criteria" : triangular (30, 40, 50);
+	"Similarity analysis" :  triangular (300, 400, 450); 
+	"Dual charts combining ranking and disagreement analysis" : triangular(250, 300, 350);
+	"Comparison of priorities between groups of stakeholders" : triangular (100, 200, 250);
+	"Import manual plan" : triangular (100, 190, 200);
+	"Import of project data" :  triangular (400, 450, 500);
+	"Re-import of updated project data" :  triangular (80, 100,120);
+	"Export of plans and project data" :triangular (300, 400, 500);
+	"Export of generated analysis charts" : triangular (200, 250, 300) ; 
+	"Trade-off analysis" : triangular (200, 250, 300);
+	"Estimated stakeholder satisfaction analysis" : triangular (200, 300, 320);
+	"Consensus analysis between alternative plans" : triangular ( 190, 200, 210);
+	"Structure of alternative plans" : triangular (100, 150, 200);
+	"Quality evaluation of alternative plans" : triangular (80, 100, 150);
+	"Resource evaluation of alternative plans" : triangular (150, 200, 250);
+}
+
+RiskExceedingRequirementAnalysisCost = RequirementAnalysisCost > RequirementAnalysisBudget;
+RequirementAnalysisBudget = deterministic (600);
+
+RequirementAnalysisCost = decision-subset (+) ("Next Release"){
+	"Hierarchical dependencies" : triangular (40, 60, 80);
+	"Grouping of features" : triangular (120, 150, 200);
+	"Pre-assignments" : triangular (10, 20, 50);
+	"Feature dependencies" : triangular (150, 200, 250);
+	"Feasibility analysis" : triangular(100, 150, 200);
+	"Flexible number of releases" :  triangular(5, 10, 15);
+	"Flexible number and type of criteria" :  triangular (150, 200, 250);
+	"Fexible number and type of resources" :  triangular (1,5, 10);
+	"Type 1 Stakekholder consensus driven planning" :   triangular (50, 100, 150);
+	"Type 2 Financially driven planning" :  triangular (30, 50, 70); 
+	"Ranking of features based on different criteria" : triangular (10, 20, 30);
+	"Similarity analysis" :  triangular (100, 150, 200); 
+	"Dual charts combining ranking and disagreement analysis" : triangular(50, 60, 70);
+	"Comparison of priorities between groups of stakeholders" : triangular (50, 60, 70);
+	"Import manual plan" : triangular (30, 40, 50);
+	"Import of project data" :  triangular (30, 50, 70);
+	"Re-import of updated project data" :  triangular (40, 50, 60);
+	"Export of plans and project data" :triangular (20, 50, 60);
+	"Export of generated analysis charts" : triangular (80, 100, 120) ; 
+	"Trade-off analysis" : triangular (50, 100, 150);
+	"Estimated stakeholder satisfaction analysis" : triangular (10, 25, 30);
+	"Consensus analysis between alternative plans" : deterministic (0);
+	"Structure of alternative plans" :  triangular (40, 50, 60);
+	"Quality evaluation of alternative plans" :  triangular (40, 50, 60);
+	"Resource evaluation of alternative plans" :  triangular (40, 50, 60); 
+}
+
+
+Constraint "Next Release" : "Pre-assignments" couples "Next Release" : "Feature dependencies";
+Constraint "Next Release" : "Pre-assignments" couples "Next Release" : "Feasibility analysis";
+Constraint "Next Release" : "Feature dependencies" couples "Next Release" : "Feasibility analysis";
+Constraint "Next Release" : "Flexible number and type of criteria" couples "Next Release": "Trade-off analysis";
+
+Constraint "Next Release" : "Dual charts combining ranking and disagreement analysis" requires "Next Release" : "Ranking of features based on different criteria";
+
+Constraint "Next Release" : "Import manual plan" requires "Next Release" : "Import of project data";
+Constraint "Next Release" : "Re-import of updated project data" requires "Next Release" : "Import of project data";
+Constraint "Next Release" : "Export of plans and project data" requires "Next Release" : "Import of project data";
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Import of project data";
+
+
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Trade-off analysis";
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Estimated stakeholder satisfaction analysis";
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Consensus analysis between alternative plans";
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Structure of alternative plans";
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Quality evaluation of alternative plans";
+Constraint "Next Release" : "Export of generated analysis charts" requires "Next Release" : "Resource evaluation of alternative plans";
+

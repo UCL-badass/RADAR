@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.ac.ucl.cs.radar.sbse.SbseParameter;
 import uk.ac.ucl.cs.radar.utilities.TableBuilder;
 
 /**
@@ -106,10 +107,17 @@ public class AnalysisResult {
 	 */
 	private String consoleMessage = "";
 
+	private SbseParameter sbseParameter;
+	/**
+	 * 
+	 */
+	private boolean useSbse;
+	private boolean constraintPresent;
 	/**
 	 *  mapping from parameter's label to parameter's evppi
 	 */
 	private Map<String, Double> evppi;
+	public AnalysisResult(){}
 	/**
 	 * Constructors analysis result with model objectives and model decisions.
 	 * @param objs model objectives.
@@ -129,6 +137,9 @@ public class AnalysisResult {
 	 */
 	public void addEvaluation (Solution s, double [] objValues){
 		value.put(s, objValues);
+	}
+	public void addEvaluations ( Map<Solution, double[]> value){
+		this.value = value;
 	}
 	/**
 	 * Returns all evaluated solutions and their corresponding objective values.
@@ -349,7 +360,21 @@ public class AnalysisResult {
 	public String getConsoleMessage (){
 		return consoleMessage;
 	}
-	
+	void useSbse(boolean useSbse){
+		this.useSbse = useSbse;
+	}
+	public void setSbseParameter (SbseParameter sbseParameter){
+		this.sbseParameter = sbseParameter;
+	}
+	SbseParameter getSbseParameter (){
+		if (sbseParameter == null){
+			sbseParameter = new SbseParameter();
+		}
+		return sbseParameter;
+	}
+	public void modelHasConstraint (boolean constraintPresent){
+		this.constraintPresent = constraintPresent;
+	}
 	public String generateSolutionHeader ( String separator){
 		// we can't use decision to generate the header due to change in the getAllSolutions
 		String result ="ID" + separator;
@@ -381,19 +406,31 @@ public class AnalysisResult {
 		totalRuntime = designSpaceRuntime+simulationRuntime+ optimisationRuntime+informationValueRuntime;
 		TableBuilder tableBuilder = new TableBuilder ();
 		tableBuilder.addRow (new String []{"Optimisation", "Analysis"});
-		tableBuilder.addRow ("-----------------------------------------", "");
+		tableBuilder.addRow ("----------------------", "\n");
 		for(int j=0; j < objectives.size(); j++){
 			String optimisationDirection = objectives.get(j).getIsMinimisation() ? "Min" : "Max";
-			tableBuilder.addRow (new String []{"Objective: ",optimisationDirection + objectives.get(j).getLabel() +"" });
+			tableBuilder.addRow (new String []{"Objective: ",optimisationDirection + objectives.get(j).getLabel() +"\n" });
 		}
-		tableBuilder.addRow ("SolutionSpace:", solutionSpace +"");
+		
 		//tableBuilder.addRow ("Minimal SolutionSet:", value.size() +"\n");
-		tableBuilder.addRow ("Design Sapce:", allSolutions.size() +"");
-		tableBuilder.addRow ("Shortlisted:", shortlist.size() +"");
-		tableBuilder.addRow ("Nbr. Variables:", nbrVariables + "");
-		tableBuilder.addRow ("Nbr. Parameters:", nbrParameters + "");
-		tableBuilder.addRow ("Nbr. Decisions:", nbrOfDecision + "");
-		tableBuilder.addRow ("Total Runtime(s):", totalRuntime +"");
+		if (!useSbse){
+			tableBuilder.addRow ("SolutionSpace:", solutionSpace +"\n");
+			tableBuilder.addRow ("Design Sapce:", allSolutions.size() +"\n");
+		}else{
+			tableBuilder.addRow ("Optimisation Approach: ", sbseParameter.isConstraintAddedToObjective() == true? "n+1":"1+n" +"\n");
+			tableBuilder.addRow ("Algorithm Name: ", sbseParameter.getAlgorithmName() +"\n");
+			tableBuilder.addRow ("Population Size: ", sbseParameter.getPopulationSize() +"\n");
+			tableBuilder.addRow ("Crossover Probability: ", sbseParameter.getCrossOverProbability() +"\n");
+			tableBuilder.addRow ("Mutation Probability: ", sbseParameter.getMutationProbability() +"\n");
+			tableBuilder.addRow ("Max Nbr. Evaluations:",  sbseParameter.getMaximunEvaluation() + "\n");
+			//tableBuilder.addRow ("Nbr. Distinct Evaluated Solutions:", allSolutions.size() +"\n");
+		}
+		
+		tableBuilder.addRow ("Shortlisted:", shortlist.size() +"\n");
+		tableBuilder.addRow ("Nbr. Variables:", nbrVariables + "\n");
+		tableBuilder.addRow ("Nbr. Parameters:", nbrParameters + "\n");
+		tableBuilder.addRow ("Nbr. Decisions:", nbrOfDecision + "\n");
+		tableBuilder.addRow ("Total Runtime(s):", totalRuntime +"\n");
 		return tableBuilder.toString();
 	}
 	public List<String> optimisationAnalysisDetails (){
@@ -403,9 +440,22 @@ public class AnalysisResult {
 			String optimisationDirection = objectives.get(j).getIsMinimisation() ? "Min" : "Max";
 			result.add ("Objective ,"+optimisationDirection + objectives.get(j).getLabel());
 		}
-		result.add ("SolutionSpace ," + solutionSpace);
+		
 		//result.add ("Minimal SolutionSet ,"+ value.size());
-		result.add ("Design Space ,"+ allSolutions.size());
+		if (!useSbse){
+			result.add ("SolutionSpace ," + solutionSpace);
+			result.add ("Design Space ,"+ allSolutions.size());
+		}else{
+			result.add ("Optimisation Approach, " + (sbseParameter.isConstraintAddedToObjective() == true? "n+1":"1+n"));
+			result.add ("Algorithm Name, "+ sbseParameter.getAlgorithmName());
+			result.add ("Population Size, "+ sbseParameter.getPopulationSize());
+			result.add ("Crossover Probability, "+ sbseParameter.getCrossOverProbability());
+			result.add ("Mutation Probability, "+ sbseParameter.getMutationProbability());
+			result.add ("Max Nbr. Evaluations, "+ sbseParameter.getMaximunEvaluation());
+			//result.add ("Nbr. Distinct Evaluated Solutions, "+ allSolutions.size());
+		}
+		
+		
 		result.add ("Shortlisted ,"+ shortlist.size() );
 		result.add ("Nbr. Variables ," + nbrVariables  );
 		result.add ("Nbr. Parameters ," + nbrParameters  );
@@ -533,6 +583,7 @@ public class AnalysisResult {
 		for (Map.Entry<Solution, double []> allSolutionEntry : value.entrySet()){
 			for (Map.Entry<Solution, double []> optimalSolutionEntry:shortlist.entrySet() ){
 				if (allSolutionEntry.getKey().selectionToString().equals(optimalSolutionEntry.getKey().selectionToString())){
+				//if (allSolutionEntry.getKey().subSetSelectionToString().equals(optimalSolutionEntry.getKey().subSetSelectionToString())){
 					solutionIndexToRemove.add(i);
 					break;
 				}
@@ -552,27 +603,56 @@ public class AnalysisResult {
 	private String optimalObjectiveToString (int index, String separator, Map<Solution, double[]> solutions){
 		String record ="";
 		List<double []> objValues = new ArrayList<double []>(solutions.values());
+		List<Solution> solns =  new ArrayList<Solution>(solutions.keySet());
 		int i =0;
-		for(double  entry: objValues.get(index)){
-			double value = objectives.get(i).getIsMinimisation() == true? entry: entry *-1;
+		//int loopCount = constraintPresent == true ? objValues.get(index).length: objValues.get(index).length-1;
+		int loopCount = sbseParameter !=null? objValues.get(index).length-1: objValues.get(index).length;
+		for(int j=0 ; j <loopCount; j++ ){
+			double value = objectives.get(j).getIsMinimisation() == true? objValues.get(index)[j]: objValues.get(index)[j] *-1;
         	record += roundOffToDesiredPrecision(value) + separator;
+		}
+		
+		/*for(double  entry: objValues.get(index)){
+			if (i != objValues.get(index).length){ //
+				double value = objectives.get(i).getIsMinimisation() == true? entry: entry *-1;
+	        	record += roundOffToDesiredPrecision(value) + separator;
+			}
         	i++;
-        }
+        }*/
+		
+		
+		// when optimisation approach 1+n is used, since jmetal will not add this objective in the objective array
+		//(sbseParameter.isConstraintAddedToObjective()
+		/*if (constraintPresent){
+			record += roundOffToDesiredPrecision(solns.get(index).getNbrViolations()) + separator;
+		}*/
+		
 		return record;
 	}
 	private String optimalDecisionsToString (int index,String separator, Map<Solution, double[]> solutions){
 		String record ="";
 		List<Solution> solutionList = new ArrayList<Solution>(solutions.keySet());
-		Map<Decision, String>  selection = solutionList.get(index).getSelection();
+		Map<Decision, List<String>>  selection = solutionList.get(index).getSelection();
+		//Map<Decision, String>  selection = solutionList.get(index).getSelection();
 		// we now use deicision to get the option because we do not know the order in which the selections are in solution.
 		for(int i =0 ; i  < decisions.size(); i ++){
 			if (!selection.containsKey(decisions.get(i))){
 				record += " " + separator;
 			}else{
 				String decision = decisions.get(i).getDecisionLabel();
-				for (Map.Entry<Decision, String> entry: selection.entrySet()){
+				for (Map.Entry<Decision, List<String>> entry: selection.entrySet()){
 					if (decision.equals(entry.getKey().getDecisionLabel())){
-						record += entry.getValue() + separator;
+						if(entry.getValue().size() >0){
+							for (String item:entry.getValue() ){
+								record += item + ";";
+							}
+						}else{
+							// situaltion where nothing is selected for a decision
+							record += "NULL" + ";";
+						}
+						
+						record = record != ""? record.substring(0,record.length()-1): "";
+						record += separator;
 						break;
 					}
 				}

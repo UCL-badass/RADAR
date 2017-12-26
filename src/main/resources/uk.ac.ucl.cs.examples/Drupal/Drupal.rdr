@@ -1,0 +1,759 @@
+Model Drupal;
+
+Objective Max ExpectedFeatureCount = EV(FeatureCount);
+Objective Min ExpectedLinesOfCode = EV (LinesOfCode);
+Objective Min ExpectedComplexity =  EV(Complexity);
+Objective Max ExpectedTestAssertions = EV (TestAssertions);
+Objective Max ExpectedNumberOfInstallations = EV (TotalNumberOfInstallations);
+Objective Min ExpectedNumberOfDevelopers = EV (TotalNumberOfDevelopers);
+Objective Min ExpectedNumberOfChanges = EV(TotalNumberOfChanges);
+
+
+// ================== Modelling Feature Count=====================
+
+
+
+FeatureCount = FeatureNodeCount 
+			+ FeatureSystemCount 
+			+ FeatureFilterCount
+			+ FeatureFieldCount
+			+ FeatureUserCount
+			+ OtherFeatures;
+
+FeatureNodeCount = CountOfFeatureNode+ FeatureNodeSubFeatureCount;
+CountOfFeatureNode = deterministic (1);
+FeatureNodeSubFeatureCount = decision-subset (+)("Node") {
+	"Blog" : deterministic (1);
+	"Forum" : deterministic (1);
+}
+
+FeatureSystemCount = deterministic(1);
+FeatureFilterCount = deterministic(1);
+
+FeatureFieldCount = CountForFeatureField +  FeatureTextCount + FeatureFieldSQLStorageCount + FeatureOptionsCount;
+
+CountForFeatureField = deterministic(1);
+FeatureTextCount = deterministic(1);
+FeatureFieldSQLStorageCount =deterministic(1); 
+
+
+FeatureOptionsCount = decision ("Field Options"){
+	"Options" : deterministic(1);
+	"Without Options" : deterministic (0);
+}
+
+
+FeatureUserCount = deterministic (1);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (1);
+	"Image" : deterministic (1);
+	"Field UI" : deterministic (1);
+	"File" : deterministic(1);
+	"Comment" : deterministic (1);
+	"Views" : FeatureViewsCount + FeatureViewsUICount ;
+	"Libraries API" : deterministic (1);
+	"IMCE" : deterministic (1);
+	"Ctools" :  FeatureCToolsCount +  CToolsSubFeaturesCount;
+	"Token": deterministic (1);
+	"Taxonomy" : deterministic (1);
+	"Date" : FeatureDateCount + DateSubFeaturesCount;
+	"WebForm" : deterministic (1);
+	"Link" : deterministic (1);
+	"EntityAPI" : FeatureEntityAPICount + EntityAPISubFeatureCount ;
+	"CKEditor" : deterministic (1);
+	"Captcha" : FeatureCaptchaCount + CaptchaSubFeatureCount;
+	"Features" : deterministic (1);
+	"Panels" : FeaturePanelsCount + PanelSubFeatureCount;
+	"Pathauto" : deterministic (1);
+	"JQuery" : deterministic (1);
+	"GoogleAnalytics" : deterministic (1);
+	"Rules" : FeatureRuleCount + RuleSubFeatureCount;
+	"BackUpMigration" : deterministic (1);
+}
+FeatureViewsCount =  deterministic(1);
+FeatureViewsUICount = decision("Views UI SubFeature"){
+	"Views UI": deterministic(1);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsCount = deterministic(1);
+CToolsSubFeaturesCount = decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (1);
+	"Ctools custom content" : deterministic(1);
+	"Views content" : deterministic (1);
+}
+
+FeatureDateCount = deterministic(1);
+DateSubFeaturesCount = decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (1);
+	"Date views" : deterministic (1);
+	"Date popups" : deterministic(1);
+}
+
+FeatureEntityAPICount = deterministic(1);
+EntityAPISubFeatureCount = decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (1);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaCount = deterministic (1);
+CaptchaSubFeatureCount = decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (1);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsCount =deterministic (1);
+PanelSubFeatureCount = decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (1);
+	"Panels IPE" : deterministic (1);
+}
+
+FeatureRuleCount = deterministic (1);
+RuleSubFeatureCount = decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (1);
+	"Rules UI" : deterministic (1);
+}
+
+// ================== Modelling Lines Of Code =====================
+
+LinesOfCode = FeatureNodeLinesOfCode 
+			+ FeatureSystemLinesOfCode 
+			+ FeatureFilterLinesOfCode
+			+ FeatureFieldLinesOfCode
+			+ FeatureUserLinesOfCode
+			+ OtherFeatures;
+
+FeatureNodeLinesOfCode = LinesOfCodeForFeatureNode+ FeatureNodeSubFeatureLinesOfCode;
+LinesOfCodeForFeatureNode = deterministic (9945);
+FeatureNodeSubFeatureLinesOfCode = decision-subset (+) ("Node") {
+	"Blog" : deterministic (550);
+	"Forum" : deterministic (2849);
+}
+
+
+FeatureSystemLinesOfCode = deterministic(20827);
+FeatureFilterLinesOfCode = deterministic(4497);
+
+
+FeatureFieldLinesOfCode = LinesOfCodeForFeatureField +  FeatureTextLinesOfCode + FeatureFieldSQLStorageLinesOfCode + FeatureOptionsLinesOfCode;
+
+LinesOfCodeForFeatureField = deterministic(8618);
+FeatureTextLinesOfCode = deterministic(1097);
+FeatureFieldSQLStorageLinesOfCode =deterministic(1292); 
+
+
+FeatureOptionsLinesOfCode = decision ("Field Options"){
+	"Options" : deterministic(898);
+	"Without Options" : deterministic (0);
+}
+FeatureUserLinesOfCode = deterministic (1);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (1026);
+	"Image" : deterministic (5027);
+	"Field UI" : deterministic (2996);
+	"File" : deterministic(1894);
+	"Comment" : deterministic (5627);
+	"Views" : FeatureViewsLinesOfCode + FeatureViewsUILinesOfCode ;
+	"Libraries API" : deterministic (1627);
+	"IMCE" : deterministic (3940);
+	"Ctools" :  FeatureCToolsLinesOfCode +  CToolsSubFeaturesLinesOfCode;
+	"Token": deterministic (4580);
+	"Taxonomy" : deterministic (5757);
+	"Date" : FeatureDateLinesOfCode + DateSubFeaturesLinesOfCode;
+	"WebForm" : deterministic (13196);
+	"Link" : deterministic (1934);
+	"EntityAPI" : FeatureEntityAPILinesOfCode + EntityAPISubFeatureLinesOfCode ;
+	"CKEditor" : deterministic (13483);
+	"Captcha" : FeatureCaptchaLinesOfCode + CaptchaSubFeatureLinesOfCode;
+	"Features" : deterministic (8483);
+	"Panels" : FeaturePanelsLinesOfCode + PanelSubFeatureLinesOfCode;
+	"Pathauto" : deterministic (3429);
+	"JQuery" : deterministic (50762);
+	"GoogleAnalytics" : deterministic (2274);
+	"Rules" : FeatureRuleLinesOfCode + RuleSubFeatureLinesOfCode;
+	"BackUpMigration" : deterministic (11639);
+}
+FeatureViewsLinesOfCode =  deterministic(54270);
+FeatureViewsUILinesOfCode = decision("Views UI SubFeature"){
+	"Views UI": deterministic(782);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsLinesOfCode = deterministic(1);
+CToolsSubFeaturesLinesOfCode = decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (317);
+	"Ctools custom content" : deterministic(284);
+	"Views content" : deterministic (2683);
+}
+
+FeatureDateLinesOfCode = deterministic(2696);
+DateSubFeaturesLinesOfCode = decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (6312);
+	"Date views" : deterministic (2383);
+	"Date popups" : deterministic(792);
+}
+
+FeatureEntityAPILinesOfCode = deterministic(13088);
+EntityAPISubFeatureLinesOfCode = decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (327);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaLinesOfCode = deterministic (3115);
+CaptchaSubFeatureLinesOfCode = decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (998);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsLinesOfCode =deterministic (13390);
+PanelSubFeatureLinesOfCode = decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (480);
+	"Panels IPE" : deterministic (1462);
+}
+
+FeatureRuleLinesOfCode = deterministic (13830);
+RuleSubFeatureLinesOfCode = decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (1271);
+	"Rules UI" : deterministic (3306);
+}
+
+// ================== Modelling Complexity =====================
+
+Complexity = FeatureNodeComplexity 
+			+ FeatureSystemComplexity 
+			+ FeatureFilterComplexity
+			+ FeatureFieldComplexity
+			+ FeatureUserComplexity
+			+ OtherFeatures;
+
+FeatureNodeComplexity = ComplexityForFeatureNode+ FeatureNodeSubFeatureComplexity;
+ComplexityForFeatureNode = deterministic (0.27);
+FeatureNodeSubFeatureComplexity = decision-subset (+) ("Node") {
+	"Blog" : deterministic (0.16);
+	"Forum" : deterministic (0.24);
+}
+
+FeatureSystemComplexity = deterministic(0.31);
+FeatureFilterComplexity = deterministic(0.17);
+
+
+
+FeatureFieldComplexity = ComplexityForFeatureField +  FeatureTextComplexity + FeatureFieldSQLStorageComplexity + FeatureOptionsComplexity;
+
+ComplexityForFeatureField  = deterministic(0.41);
+FeatureTextComplexity= deterministic(0.29);
+FeatureFieldSQLStorageComplexity = deterministic(0.3);
+
+FeatureOptionsComplexity = decision ("Field Options"){
+	"Options" : deterministic(0.17);
+	"Without Options" : deterministic (0);
+}
+
+FeatureUserComplexity = deterministic (0.26);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (0.14);
+	"Image" : deterministic (0.29);
+	"Field UI" : deterministic (0.28);
+	"File" : deterministic(0.67);
+	"Comment" : deterministic (0.23);
+	"Views" : FeatureViewsComplexity + FeatureViewsUIComplexity ;
+	"Libraries API" : deterministic (0.55);
+	"IMCE" : deterministic (0.47);
+	"Ctools" :  FeatureCToolsComplexity +  CToolsSubFeaturesComplexity;
+	"Token": deterministic (0.51);
+	"Taxonomy" : deterministic (0.23);
+	"Date" : FeatureDateComplexity + DateSubFeaturesComplexity;
+	"WebForm" : deterministic (0.51);
+	"Link" : deterministic (0.63);
+	"EntityAPI" : FeatureEntityAPIComplexity + EntityAPISubFeatureComplexity ;
+	"CKEditor" : deterministic (0.59);
+	"Captcha" : FeatureCaptchaComplexity + CaptchaSubFeatureComplexity;
+	"Features" : deterministic (0.56);
+	"Panels" : FeaturePanelsComplexity + PanelSubFeatureComplexity;
+	"Pathauto" : deterministic (0.23);
+	"JQuery" : deterministic (0.26);
+	"GoogleAnalytics" : deterministic (0.29);
+	"Rules" : FeatureRuleComplexity + RuleSubFeatureComplexity;
+	"BackUpMigration" : deterministic (0.37);
+}
+FeatureViewsComplexity =  deterministic(0.41);
+FeatureViewsUIComplexity = decision("Views UI SubFeature"){
+	"Views UI": deterministic(0.37);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsComplexity = deterministic(0.52);
+CToolsSubFeaturesComplexity = decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (0.19);
+	"Ctools custom content" : deterministic(0.3);
+	"Views content" : deterministic (0.46);
+}
+
+FeatureDateComplexity = deterministic(0.44);
+DateSubFeaturesComplexity = decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (0.6);
+	"Date views" : deterministic (0.44);
+	"Date popups" : deterministic(0.36);
+}
+
+FeatureEntityAPIComplexity = deterministic(1);
+EntityAPISubFeatureComplexity = decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (1.09);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaComplexity = deterministic (0.19);
+CaptchaSubFeatureComplexity = decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (0.28);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsComplexity =deterministic (0.35);
+PanelSubFeatureComplexity = decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (0.35);
+	"Panels IPE" : deterministic (0.23);
+}
+
+FeatureRuleComplexity = deterministic (0.49);
+RuleSubFeatureComplexity = decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (0.15);
+	"Rules UI" : deterministic (0.39);
+}
+
+// ================== Modelling Test Assertions=====================
+
+TestAssertions = FeatureNodeTestAssertions 
+			+ FeatureSystemTestAssertions 
+			+ FeatureFilterTestAssertions
+			+ FeatureFieldTestAssertions
+			+ FeatureUserTestAssertions
+			+ OtherFeatures;
+
+
+FeatureNodeTestAssertions = TestAssertionsForFeatureNode+ FeatureNodeSubFeatureTestAssertions;
+TestAssertionsForFeatureNode = deterministic (1391);
+FeatureNodeSubFeatureTestAssertions = decision-subset (+)("Node")  {
+	"Blog" : deterministic (244);
+	"Forum" : deterministic (677);
+}
+
+FeatureSystemTestAssertions = deterministic(2138);
+FeatureFilterTestAssertions = deterministic(958);
+
+FeatureFieldTestAssertions = TestAssertionsForFeatureField +  FeatureTextTestAssertions + FeatureFieldSQLStorageTestAssertions + FeatureOptionsTestAssertions;
+
+TestAssertionsForFeatureField = deterministic(870);
+FeatureTextTestAssertions = deterministic(444);
+FeatureFieldSQLStorageTestAssertions = deterministic(94);
+
+
+FeatureOptionsTestAssertions = decision ("Field Options"){
+	"Options" : deterministic(227);
+	"Without Options" : deterministic (0);
+}
+FeatureUserTestAssertions = deterministic (1335);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (330);
+	"Image" : deterministic (667);
+	"Field UI" : deterministic (287);
+	"File" : deterministic(2293);
+	"Comment" : deterministic (3287);
+	"Views" : FeatureViewsTestAssertions + FeatureViewsUITestAssertions ;
+	"Libraries API" : deterministic (135);
+	"IMCE" : deterministic (0);
+	"Ctools" :  FeatureCToolsTestAssertions +  CToolsSubFeaturesTestAssertions;
+	"Token": deterministic (347);
+	"Taxonomy" : deterministic (677);
+	"Date" : FeatureDateTestAssertions + DateSubFeaturesTestAssertions;
+	"WebForm" : deterministic (456);
+	"Link" : deterministic (1275);
+	"EntityAPI" : FeatureEntityAPITestAssertions + EntityAPISubFeatureTestAssertions ;
+	"CKEditor" : deterministic (0);
+	"Captcha" : FeatureCaptchaTestAssertions + CaptchaSubFeatureTestAssertions;
+	"Features" : deterministic (16);
+	"Panels" : FeaturePanelsTestAssertions + PanelSubFeatureTestAssertions;
+	"Pathauto" : deterministic (316);
+	"JQuery" : deterministic (0);
+	"GoogleAnalytics" : deterministic (200);
+	"Rules" : FeatureRuleTestAssertions + RuleSubFeatureTestAssertions;
+	"BackUpMigration" : deterministic (0);
+}
+FeatureViewsTestAssertions =  deterministic(1089);
+FeatureViewsUITestAssertions = decision("Views UI SubFeature"){
+	"Views UI": deterministic(538);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsTestAssertions = deterministic(1);
+CToolsSubFeaturesTestAssertions = decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (0);
+	"Ctools custom content" : deterministic(0);
+	"Views content" : deterministic (0);
+}
+
+FeatureDateTestAssertions = deterministic(1);
+DateSubFeaturesTestAssertions = decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (106);
+	"Date views" : deterministic (0);
+	"Date popups" : deterministic(0);
+}
+
+FeatureEntityAPITestAssertions = deterministic(1);
+EntityAPISubFeatureTestAssertions = decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (6);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaTestAssertions = deterministic (851);
+CaptchaSubFeatureTestAssertions = decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (1);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsTestAssertions =deterministic (0);
+PanelSubFeatureTestAssertions = decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (0);
+	"Panels IPE" : deterministic (0);
+}
+
+FeatureRuleTestAssertions = deterministic (285);
+RuleSubFeatureTestAssertions = decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (7);
+	"Rules UI" : deterministic (0);
+}
+
+//======= Modelling Total Number Of Installations================
+
+TotalNumberOfInstallations = FeatureNodeTotalNumberOfInstallations 
+			+ FeatureSystemTotalNumberOfInstallations
+			+ FeatureFilterTestAssertions
+			+ FeatureFieldTestAssertions
+			+ FeatureUserTestAssertions
+			+ OtherFeatures;
+
+FeatureNodeTotalNumberOfInstallations = TotalNumberOfInstallationsForFeatureNode+ FeatureNodeSubFeatureTotalNumberOfInstallations;
+
+TotalNumberOfInstallationsForFeatureNode = deterministic (5259525);
+FeatureNodeSubFeatureTotalNumberOfInstallations = decision-subset (+)("Node")  {
+	"Blog" : deterministic (5259525);
+	"Forum" : deterministic (5259525);
+}
+
+FeatureSystemTotalNumberOfInstallations= deterministic(5259525);
+FeatureFilterTotalNumberOfInstallations= deterministic(5259525);
+
+FeatureFieldTotalNumberOfInstallations= TotalNumberOfInstallationsForFeatureField +  FeatureTextTotalNumberOfInstallations+ FeatureFieldSQLStorageTotalNumberOfInstallations+ FeatureOptionsTestAssertions;
+
+TotalNumberOfInstallationsForFeatureField= deterministic(5259525);
+FeatureTextTotalNumberOfInstallations= deterministic(5259525);
+FeatureFieldSQLStorageTotalNumberOfInstallations= deterministic(5259525);
+
+FeatureOptionsTotalNumberOfInstallations= decision ("Field Options"){
+	"Options" : deterministic(5259525);
+	"Without Options" : deterministic (0);
+}
+FeatureUserTotalNumberOfInstallations= deterministic (5259525);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (5259525);
+	"Image" : deterministic (5259525);
+	"Field UI" : deterministic (5259525);
+	"File" : deterministic(5259525);
+	"Comment" : deterministic (5259525);
+	"Views" : FeatureViewsTotalNumberOfInstallations+ FeatureViewsUITotalNumberOfInstallations;
+	"Libraries API" : deterministic (516333);
+	"IMCE" : deterministic (392705);
+	"Ctools" :  FeatureCToolsTotalNumberOfInstallations+  CToolsSubFeaturesTestAssertions;
+	"Token": deterministic (715563);
+	"Taxonomy" : deterministic (677);
+	"Date" : FeatureDateTotalNumberOfInstallations+ DateSubFeaturesTestAssertions;
+	"WebForm" : deterministic (402163);
+	"Link" : deterministic (286892);
+	"EntityAPI" : FeatureEntityAPITotalNumberOfInstallations+ EntityAPISubFeatureTotalNumberOfInstallations;
+	"CKEditor" : deterministic (280919);
+	"Captcha" : FeatureCaptchaTotalNumberOfInstallations+ CaptchaSubFeatureTestAssertions;
+	"Features" : deterministic (209653);
+	"Panels" : FeaturePanelsTotalNumberOfInstallations+ PanelSubFeatureTestAssertions;
+	"Pathauto" : deterministic (622478);
+	"JQuery" : deterministic (286556);
+	"GoogleAnalytics" : deterministic (348278);
+	"Rules" : FeatureRuleTotalNumberOfInstallations+ RuleSubFeatureTestAssertions;
+	"BackUpMigration" : deterministic (281797);
+}
+FeatureViewsTotalNumberOfInstallations=  deterministic(1);
+FeatureViewsUITotalNumberOfInstallations= decision("Views UI SubFeature"){
+	"Views UI": deterministic(802467);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsTotalNumberOfInstallations= deterministic(1);
+CToolsSubFeaturesTotalNumberOfInstallations= decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (747248);
+	"Ctools custom content" : deterministic(747248);
+	"Views content" : deterministic (747248);
+}
+
+FeatureDateTotalNumberOfInstallations= deterministic(412324);
+DateSubFeaturesTotalNumberOfInstallations= decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (412324);
+	"Date views" : deterministic (412324);
+	"Date popups" : deterministic(412324);
+}
+
+FeatureEntityAPITotalNumberOfInstallations= deterministic(407569);
+EntityAPISubFeatureTotalNumberOfInstallations= decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (407569);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaTotalNumberOfInstallations= deterministic (226295);
+CaptchaSubFeatureTotalNumberOfInstallations= decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (226295);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsTotalNumberOfInstallations=deterministic (206805);
+PanelSubFeatureTotalNumberOfInstallations= decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (206805);
+	"Panels IPE" : deterministic (206805);
+}
+
+FeatureRuleTotalNumberOfInstallations= deterministic (238388);
+RuleSubFeatureTotalNumberOfInstallations= decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (238388);
+	"Rules UI" : deterministic (238388);
+}
+
+//======= Modelling Total Number Of Developers================
+
+TotalNumberOfDevelopers = FeatureNodeTotalNumberOfDevelopers 
+			+ FeatureSystemTotalNumberOfDevelopers
+			+ FeatureFilterTestAssertions
+			+ FeatureFieldTestAssertions
+			+ FeatureUserTestAssertions
+			+ OtherFeatures;
+
+
+FeatureNodeTotalNumberOfDevelopers = TotalNumberOfDevelopersForFeatureNode+ FeatureNodeSubFeatureTotalNumberOfDevelopers;
+
+TotalNumberOfDevelopersForFeatureNode = deterministic (94);
+FeatureNodeSubFeatureTotalNumberOfDevelopers = decision-subset (+)("Node")  {
+	"Blog" : deterministic (94);
+	"Forum" : deterministic (94);
+}
+
+FeatureSystemTotalNumberOfDevelopers= deterministic(94);
+FeatureFilterTotalNumberOfDevelopers= deterministic(94);
+
+FeatureFieldTotalNumberOfDevelopers=TotalNumberOfDevelopersForFeatureField +  FeatureTextTotalNumberOfDevelopers+ FeatureFieldSQLStorageTotalNumberOfDevelopers+ FeatureOptionsTotalNumberOfDevelopers;
+
+TotalNumberOfDevelopersForFeatureField= deterministic(94);
+FeatureTextTotalNumberOfDevelopers= deterministic(94);
+FeatureFieldSQLStorageTotalNumberOfDevelopers= deterministic(94);
+
+
+
+FeatureOptionsTotalNumberOfDevelopers= decision ("Field Options"){
+	"Options" : deterministic(94);
+	"Without Options" : deterministic (0);
+}
+FeatureUserTotalNumberOfDevelopers= deterministic (94);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (94);
+	"Image" : deterministic (94);
+	"Field UI" : deterministic (94);
+	"File" : deterministic(94);
+	"Comment" : deterministic (94);
+	"Views" : FeatureViewsTotalNumberOfDevelopers+ FeatureViewsUITotalNumberOfDevelopers;
+	"Libraries API" : deterministic (7);
+	"IMCE" : deterministic (13);
+	"Ctools" :  FeatureCToolsTotalNumberOfDevelopers+  CToolsSubFeaturesTestAssertions;
+	"Token": deterministic (31);
+	"Taxonomy" : deterministic (94);
+	"Date" : FeatureDateTotalNumberOfDevelopers+ DateSubFeaturesTestAssertions;
+	"WebForm" : deterministic (46);
+	"Link" : deterministic (31);
+	"EntityAPI" : FeatureEntityAPITotalNumberOfDevelopers+ EntityAPISubFeatureTotalNumberOfDevelopers;
+	"CKEditor" : deterministic (29);
+	"Captcha" : FeatureCaptchaTotalNumberOfDevelopers+ CaptchaSubFeatureTestAssertions;
+	"Features" : deterministic (36);
+	"Panels" : FeaturePanelsTotalNumberOfDevelopers+ PanelSubFeatureTestAssertions;
+	"Pathauto" : deterministic (33);
+	"JQuery" : deterministic (17);
+	"GoogleAnalytics" : deterministic (21);
+	"Rules" : FeatureRuleTotalNumberOfDevelopers+ RuleSubFeatureTestAssertions;
+	"BackUpMigration" : deterministic (7);
+}
+FeatureViewsTotalNumberOfDevelopers=  deterministic(178);
+FeatureViewsUITotalNumberOfDevelopers= decision("Views UI SubFeature"){
+	"Views UI": deterministic(178);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsTotalNumberOfDevelopers= deterministic(75);
+CToolsSubFeaturesTotalNumberOfDevelopers= decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (75);
+	"Ctools custom content" : deterministic(75);
+	"Views content" : deterministic (75);
+}
+
+FeatureDateTotalNumberOfDevelopers= deterministic(42);
+DateSubFeaturesTotalNumberOfDevelopers= decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (42);
+	"Date views" : deterministic (42);
+	"Date popups" : deterministic(42);
+}
+
+FeatureEntityAPITotalNumberOfDevelopers= deterministic(45);
+EntityAPISubFeatureTotalNumberOfDevelopers= decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (45);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaTotalNumberOfDevelopers= deterministic (43);
+CaptchaSubFeatureTotalNumberOfDevelopers= decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (43);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsTotalNumberOfDevelopers=deterministic (43);
+PanelSubFeatureTotalNumberOfDevelopers= decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (43);
+	"Panels IPE" : deterministic (43);
+}
+
+FeatureRuleTotalNumberOfDevelopers= deterministic (52);
+RuleSubFeatureTotalNumberOfDevelopers= decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (52);
+	"Rules UI" : deterministic (52);
+}
+
+// ================== Modelling Total Number of Changes =====================
+
+TotalNumberOfChanges = FeatureNodeTotalNumberOfChanges 
+			+ FeatureSystemTotalNumberOfChanges
+			+ FeatureFilterTestAssertions
+			+ FeatureFieldTestAssertions
+			+ FeatureUserTestAssertions
+			+ OtherFeatures;
+
+
+FeatureNodeTotalNumberOfChanges = TotalNumberOfChangesForFeatureNode+ FeatureNodeSubFeatureTotalNumberOfChanges;
+
+TotalNumberOfChangesForFeatureNode = deterministic (9);
+FeatureNodeSubFeatureTotalNumberOfChanges = decision-subset (+) ("Node") {
+	"Blog" : deterministic (0);
+	"Forum" : deterministic (3);
+}
+
+FeatureSystemTotalNumberOfChanges= deterministic(19);
+FeatureFilterTotalNumberOfChanges= deterministic(1);
+
+FeatureFieldTotalNumberOfChanges= TotalNumberOfChangesForFeatureField +  FeatureTextTotalNumberOfChanges+ FeatureFieldSQLStorageTotalNumberOfChanges+ FeatureOptionsTotalNumberOfChanges;
+
+TotalNumberOfChangesForFeatureField= deterministic(6);
+FeatureTextTotalNumberOfChanges= deterministic(0);
+FeatureFieldSQLStorageTotalNumberOfChanges= deterministic(1);
+
+FeatureOptionsTotalNumberOfChanges= decision ("Field Options"){
+	"Options" : deterministic(0);
+	"Without Options" : deterministic (0);
+}
+FeatureUserTotalNumberOfChanges= deterministic (7);
+OtherFeatures = decision-subset(+)("Drupal Non-Mandatory Features"){
+	"Path" : deterministic (0);
+	"Image" : deterministic (9);
+	"Field UI" : deterministic (4);
+	"File" : deterministic(1);
+	"Comment" : deterministic (2);
+	"Views" : FeatureViewsTotalNumberOfChanges+ FeatureViewsUITotalNumberOfChanges;
+	"Libraries API" : deterministic (7);
+	"IMCE" : deterministic (9);
+	"Ctools" :  FeatureCToolsTotalNumberOfChanges+  CToolsSubFeaturesTestAssertions;
+	"Token": deterministic (10);
+	"Taxonomy" : deterministic (2);
+	"Date" : FeatureDateTotalNumberOfChanges+ DateSubFeaturesTestAssertions;
+	"WebForm" : deterministic (46);
+	"Link" : deterministic (11);
+	"EntityAPI" : FeatureEntityAPITotalNumberOfChanges+ EntityAPISubFeatureTotalNumberOfChanges;
+	"CKEditor" : deterministic (40);
+	"Captcha" : FeatureCaptchaTotalNumberOfChanges+ CaptchaSubFeatureTestAssertions;
+	"Features" : deterministic (72);
+	"Panels" : FeaturePanelsTotalNumberOfChanges+ PanelSubFeatureTestAssertions;
+	"Pathauto" : deterministic (2);
+	"JQuery" : deterministic (1);
+	"GoogleAnalytics" : deterministic (14);
+	"Rules" : FeatureRuleTotalNumberOfChanges+ RuleSubFeatureTestAssertions;
+	"BackUpMigration" : deterministic (90);
+}
+FeatureViewsTotalNumberOfChanges=  deterministic(27);
+FeatureViewsUITotalNumberOfChanges= decision("Views UI SubFeature"){
+	"Views UI": deterministic(0);
+	"Without UI": deterministic(0);
+}
+
+FeatureCToolsTotalNumberOfChanges= deterministic(32);
+CToolsSubFeaturesTotalNumberOfChanges= decision-subset(+)("Ctool SubFeature"){
+	"Ctools access ruleset" : deterministic (0);
+	"Ctools custom content" : deterministic(1);
+	"Views content" : deterministic (5);
+}
+
+FeatureDateTotalNumberOfChanges= deterministic(9);
+DateSubFeaturesTotalNumberOfChanges= decision-subset(+)("Date SubFeature"){
+	"Date API" : deterministic (11);
+	"Date views" : deterministic (6);
+	"Date popups" : deterministic(4);
+}
+
+FeatureEntityAPITotalNumberOfChanges= deterministic(14);
+EntityAPISubFeatureTotalNumberOfChanges= decision("Entity API SubFeatures"){
+	"Entity Tokens" : deterministic (1);
+	"Without Entity Tokens" : deterministic (0);
+}
+
+FeatureCaptchaTotalNumberOfChanges= deterministic (15);
+CaptchaSubFeatureTotalNumberOfChanges= decision("Captcha SubFeature"){
+	"Image Captcha" : deterministic (0);
+	"Without Image Captcha" : deterministic (0);
+}
+
+FeaturePanelsTotalNumberOfChanges=deterministic (34);
+PanelSubFeatureTotalNumberOfChanges= decision-subset (+)("Panels  SubFeatures"){
+	"Panel Nodes" : deterministic (2);
+	"Panels IPE" : deterministic (20);
+}
+
+FeatureRuleTotalNumberOfChanges= deterministic (5);
+RuleSubFeatureTotalNumberOfChanges= decision-subset (+)("Rules  SubFeatures"){
+	"Rules Scheduler" : deterministic (4);
+	"Rules UI" : deterministic (1);
+}
+
+
+
+Constraint "Node": "Forum" requires "Drupal Non-Mandatory Features" : "Taxonomy";
+Constraint "Node": "Forum" requires "Field Options" : "Options";
+Constraint "Node": "Forum" requires "Drupal Non-Mandatory Features" : "Comment";
+Constraint "Drupal Non-Mandatory Features": "Image" requires "Drupal Non-Mandatory Features" : "File";
+Constraint "Drupal Non-Mandatory Features": "Views" requires "Drupal Non-Mandatory Features" : "Ctools";
+Constraint "Views UI SubFeature": "Views UI" requires "Drupal Non-Mandatory Features" : "Ctools";
+Constraint "Ctools": "Views content" requires "Drupal Non-Mandatory Features" : "Views";
+Constraint "Drupal Non-Mandatory Features": "Taxonomy" requires "Field Options" : "Options";
+Constraint "Date SubFeature": "Date views" requires "Drupal Non-Mandatory Features" : "Ctools";
+Constraint "Date SubFeature": "Date views" requires "Drupal Non-Mandatory Features" : "Views";
+Constraint "Drupal Non-Mandatory Features": "Panels" requires "Drupal Non-Mandatory Features" : "Ctools";
+Constraint "Panels": "Panels IPE"  requires "Drupal Non-Mandatory Features" : "Ctools";
+Constraint "Panels": "Panel Nodes"  requires "Drupal Non-Mandatory Features" : "Ctools";
+Constraint "Drupal Non-Mandatory Features": "Pathauto" requires "Drupal Non-Mandatory Features" : "Token";
+Constraint "Drupal Non-Mandatory Features": "Pathauto" requires "Drupal Non-Mandatory Features" : "Path";
+Constraint "Drupal Non-Mandatory Features": "Rules" requires "Drupal Non-Mandatory Features" : "EntityAPI";
+Constraint "Drupal Non-Mandatory Features": "Rules" requires "Entity API SubFeatures" : "Entity Tokens";
+Constraint "Rules  SubFeatures": "Rules Scheduler" requires "Drupal Non-Mandatory Features" : "EntityAPI";
+Constraint "Rules  SubFeatures": "Rules Scheduler" requires "Entity API SubFeatures" : "Entity Tokens";
+Constraint "Rules  SubFeatures": "Rules UI" requires "Drupal Non-Mandatory Features" : "EntityAPI";
+Constraint "Rules  SubFeatures": "Rules UI" requires  "Entity API SubFeatures" : "Entity Tokens";
+
+
+
+
+ 

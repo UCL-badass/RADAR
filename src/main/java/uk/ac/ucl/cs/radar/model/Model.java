@@ -1,11 +1,19 @@
 package uk.ac.ucl.cs.radar.model;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
+import uk.ac.ucl.cs.radar.model.Constraint;
+import uk.ac.ucl.cs.radar.model.Decision;
+import uk.ac.ucl.cs.radar.model.ExcludeConstraint;
+import uk.ac.ucl.cs.radar.model.Objective;
+import uk.ac.ucl.cs.radar.model.ProblemType;
+import uk.ac.ucl.cs.radar.model.QualityVariable;
+import uk.ac.ucl.cs.radar.model.RequireConstraint;
 import uk.ac.ucl.cs.radar.exception.CyclicDependencyException;
 import uk.ac.ucl.cs.radar.exception.ModelException;
 import uk.ac.ucl.cs.radar.information.analysis.InformationAnalysis;
@@ -22,6 +30,7 @@ public class Model implements ModelVisitorElement {
 		decisions = new LinkedHashMap<String, Decision>();
 		visitedQualityVariableStack = new LinkedHashMap<String,QualityVariable>();
 		undefinedQualityVariable = new ArrayList<String>();
+		constraints = new ArrayList<Constraint>();
 	}
 	/**
 	 * the name of the model instance
@@ -68,6 +77,10 @@ public class Model implements ModelVisitorElement {
 	 * A list that stores model variables used within an expression but never defined.
 	 */
 	private List<String> undefinedQualityVariable;
+
+	private List<Constraint> constraints;
+	
+	private ProblemType problemType;
 	
 	public void setModelName(String modelName ){
 		this.modelName =modelName;
@@ -347,13 +360,15 @@ public class Model implements ModelVisitorElement {
 		}
 		for (Solution s: allSolutions){
 			if(s.selection(d0) != null){
-				if ( !s.selection(d0).equals(option) && s.selection(d1) != null) return false;
+				if ( !s.selection(d0).contains(option) && s.selection(d1) != null) return false;
 			}else{
 				result =false;
 			}
 		}
 		return result;
 	}
+	
+
 	/**
 	* Generates the decision diagram in DOT format.
 	* @param allSolutions all generated solutions.
@@ -362,6 +377,7 @@ public class Model implements ModelVisitorElement {
 	public String generateDecisionDiagram(List<Solution> allSolutions){
 		int idCounter =0;
 		Map<Decision, Integer> decisionIDs = new LinkedHashMap<Decision, Integer>();
+		List<String> storedDecisionsAndOptions = new ArrayList<String>();
 		List<String> edges = new ArrayList<String>();
 		String result = "digraph G { \n";
 		for(Decision d: this.getDecisions()){
@@ -371,14 +387,18 @@ public class Model implements ModelVisitorElement {
 			}else{
 				dID = decisionIDs.get(d);
 			}
-			String dShape =  "\"" + dID +  "\""  + "[label=\"" + d.getDecisionLabel() +"\", shape = polygon, sides =8 ]"; 
+			String decisionTye = d.getDecisionType() == DecisionType.MutuallyExclsisve? " ": ",peripheries = 2";
+			String dShape =  "\"" + dID +  "\""  + "[label=\"" + d.getDecisionLabel() +"\", shape = polygon, sides =8" +decisionTye+" ]"; 
 			result +=  dShape;
 			for(String option: d.getOptions()){
 				Integer optionID =idCounter++;
 				String optionShape = "\"" + optionID +  "\""  + "[label=\"" + option +"\"]"; 
 				result +=  optionShape;
 				
-				String newLine = "\"" + dID + "\"" + " -> " + "\"" + optionID + "\"" + "\n";
+				String newLine = "\"" + dID + "\"" + " -> " + "\"" + optionID + "\"" + " \n";
+				
+				storedDecisionsAndOptions.add(d.getDecisionLabel()+ ":" + dID+ "->" + option + ":" + optionID);
+				
 				if (!edges.contains(newLine)){
 					result = result + newLine;
 					edges.add(newLine);
@@ -393,7 +413,7 @@ public class Model implements ModelVisitorElement {
 						}
 						String d1Shape =  "\"" + d1ID +  "\""  + "[label=\"" + d1.getDecisionLabel() +"\", shape = polygon, sides =8 ]"; 
 						result +=  d1Shape;
-						newLine = "\"" + optionID + "\"" + " -> " + "\"" + d1ID + "\"" + "\n";
+						newLine = "\"" + optionID + "\"" + " -> " + "\"" + d1ID + "\"" + " \n";
 						if (!edges.contains(newLine)){
 							result = result + newLine;
 							edges.add(newLine);
@@ -402,8 +422,84 @@ public class Model implements ModelVisitorElement {
 				}
 			}
 		}
+		result += constraintToDot(storedDecisionsAndOptions);
 		result += "}";
 		return result;
+	}
+	
+	// decision to decision constraint
+	String constraintToDot (List<String> storedDecisionsAndOptions ){
+		String dot ="";
+		dot += excludeConstraintsToDot(storedDecisionsAndOptions);
+		dot += requireConstraintsToDot(storedDecisionsAndOptions);
+		dot += coupleConstraintsToDot(storedDecisionsAndOptions);
+		return dot;
+	}
+	
+	String excludeConstraintsToDot (List<String> storedDecisionsAndOptions){
+		String result = "";
+		for (ExcludeConstraint exclude : getExcludeConstraints()){
+			String leftExcludeDecision = exclude.getLeftConstraintArgumnet().getDecision();
+			String leftExcludeOption = exclude.getLeftConstraintArgumnet().getOption();
+			String rightExcludeDecision = exclude.getRightConstraintArgumnet().getDecision();
+			String rightExcludeOption = exclude.getRightConstraintArgumnet().getOption();
+			String leftID = getDecisionOrOptionID(storedDecisionsAndOptions, leftExcludeDecision,leftExcludeOption);
+			String rightID = getDecisionOrOptionID(storedDecisionsAndOptions, rightExcludeDecision, rightExcludeOption);
+			//label= "\"" + "exclude" + "\"]";
+			result += "\"" + leftID + "\"" + "-> " + "\"" + rightID + "\"" + "[style=dotted, dir=both, arrowhead=empty, arrowtail=empty, label= excludes] \n";
+		}
+		return result;
+	}
+	String requireConstraintsToDot (List<String> storedDecisionsAndOptions){
+		String result = "";
+		for (RequireConstraint exclude : getRequireConstraints()){
+			String leftExcludeDecision = exclude.getLeftConstraintArgumnet().getDecision();
+			String leftExcludeOption = exclude.getLeftConstraintArgumnet().getOption();
+			String rightExcludeDecision = exclude.getRightConstraintArgumnet().getDecision();
+			String rightExcludeOption = exclude.getRightConstraintArgumnet().getOption();
+			String leftID = getDecisionOrOptionID(storedDecisionsAndOptions, leftExcludeDecision,leftExcludeOption);
+			String rightID = getDecisionOrOptionID(storedDecisionsAndOptions, rightExcludeDecision, rightExcludeOption);
+			//label= \"" + "exclude" + "\"]
+			result += "\"" + leftID + "\"" + "-> " + "\"" + rightID + "\"" + "[style=dotted, arrowhead=empty,  label= requires] \n";
+		}
+		return result;
+	}
+	String coupleConstraintsToDot (List<String> storedDecisionsAndOptions){
+		String result = "";
+		for (CoupleConstraint couple : getCoupledConstraints()){
+			String leftExcludeDecision = couple.getLeftConstraintArgumnet().getDecision();
+			String leftExcludeOption = couple.getLeftConstraintArgumnet().getOption();
+			String rightExcludeDecision = couple.getRightConstraintArgumnet().getDecision();
+			String rightExcludeOption = couple.getRightConstraintArgumnet().getOption();
+			String leftID = getDecisionOrOptionID(storedDecisionsAndOptions, leftExcludeDecision,leftExcludeOption);
+			String rightID = getDecisionOrOptionID(storedDecisionsAndOptions, rightExcludeDecision, rightExcludeOption);
+			//label= \"" + "couple" + "\"]
+			result += "\"" + leftID + "\"" + "-> " + "\"" + rightID + "\"" + "[style=dotted, dir=both, arrowhead=crow,arrowtail=crow, label= couples] \n";
+		}
+		return result;
+	}
+	String getDecisionOrOptionID (List<String> storedDecisionsAndOptions, String constraintDecision, String constraintOption){
+		String ID = "";
+		for (String record : storedDecisionsAndOptions){
+			String [] decisionAndOption =  record.split("->");
+			String [] decision = decisionAndOption[0].split(":");
+			String [] option =decisionAndOption[1].split(":");
+			if(constraintDecision.equals(decision[0])){
+				//check if the left decision has an option
+				// if not the ID is the decision. If yes, the ID is the option
+				if (StringUtils.isEmpty(constraintOption)){
+					ID += decision[1];
+				}else if (constraintOption.equals(option[0])){
+					ID += option[1];
+				}
+				// To avoid duplicate ID values due to many options, break out of the loop once ID has a value,
+				//because in 'record', a decision have more than one option, as such ID may have values like '33' as many options the decision has.
+				if(!StringUtils.isEmpty(ID)){
+					break;
+				}
+			}
+		}
+		return ID;
 	}
 	/**
 	* Checks if specified objective exist in a model.
@@ -441,10 +537,56 @@ public class Model implements ModelVisitorElement {
 		}
 		return evaluatedSolutions;
 	}
+	void addMaximisationSign(double [] objVal){
+		for (int i =0; i < objVal.length ; i++){
+			if (this.getObjectives().get(i).getIsMinimisation() == false){
+				objVal[i] = objVal[i] *-1;
+			}
+		}
+	}
 	void addUndefinedQualityVariable (String undefinedQualityVariable){
 		this.undefinedQualityVariable.add(undefinedQualityVariable);
 	}
 	List<String> getUndefinedQualityVariables (){
 		return undefinedQualityVariable;
+	}
+	public void setConstraint (List<Constraint> constraints){
+		this.constraints = constraints;
+	}
+	public List<Constraint> getConstraints (){
+		return constraints;
+	}
+	public List<ExcludeConstraint>  getExcludeConstraints (){
+		List<ExcludeConstraint> result = new ArrayList<ExcludeConstraint>();
+		for(Constraint constraint : constraints){
+			if (constraint instanceof ExcludeConstraint){
+				result.add((ExcludeConstraint)constraint);
+			}
+		}
+		return result;
+	}
+	public List<RequireConstraint>  getRequireConstraints (){
+		List<RequireConstraint> result = new ArrayList<RequireConstraint>();
+		for(Constraint constraint : constraints){
+			if (constraint instanceof RequireConstraint){
+				result.add((RequireConstraint)constraint);
+			}
+		}
+		return result;
+	}
+	public List<CoupleConstraint>  getCoupledConstraints (){
+		List<CoupleConstraint> result = new ArrayList<CoupleConstraint>();
+		for(Constraint constraint : constraints){
+			if (constraint instanceof CoupleConstraint){
+				result.add((CoupleConstraint)constraint);
+			}
+		}
+		return result;
+	}
+	public ProblemType getProblemType (){
+		return problemType;
+	}
+	public void setProblemType (ProblemType problemType){
+		this.problemType = problemType;
 	}
 }

@@ -15,8 +15,23 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class Helper {
+import org.apache.commons.lang3.StringUtils;
 
+import uk.ac.ucl.cs.radar.model.Model;
+import uk.ac.ucl.cs.radar.model.Parser;
+
+public class Helper {
+	
+	public static Model loadModel (String model, int nbr_Simulation, String infoValueObjective, String subGraphObjective) throws Exception{
+		Model semanticModel = null;
+		try {
+			semanticModel = new Parser().parseCommandLineModel(model.trim(), nbr_Simulation, infoValueObjective,subGraphObjective);
+		}catch (RuntimeException re){
+			throw new RuntimeException( "Error: "+ re.getMessage());
+		}
+		return semanticModel;
+		
+	}
 	public static void writeImageToFolder (String directory, BufferedImage image, String imageFormat, String imageName) throws IOException{
 		File resultFile;
 		resultFile = new File(directory);
@@ -101,6 +116,42 @@ public class Helper {
 	    Graphics2D g = bi.createGraphics();
 	    panel.printAll(g);
 	    return bi;
+	}
+	public static String addDirectorySlash(String path, char separator){
+		if (path != "" && path.trim().charAt(path.length()-1) != separator){
+			path =path.trim() + separator;
+			
+		}
+		return path;
+	}
+	public static String processJarLocationPath(String  outPutDirectory){
+		String result = outPutDirectory;
+		File f = new File(outPutDirectory);
+		char separator = f.separator.toCharArray()[0];
+		boolean filebeginningHasSeparator = false;
+		if (outPutDirectory != null && outPutDirectory != "" ){
+			if (outPutDirectory.toCharArray()[0] == separator){
+				filebeginningHasSeparator = true;
+			}
+			String[] foldersInPath = StringUtils.split(outPutDirectory,f.separator);
+			
+			// check if the path where the jar is stored contains the jar itself. if yes, remove the jar name to have only folders
+			if (foldersInPath != null && foldersInPath[foldersInPath.length-1].contains(".jar")){
+				String jarPath = "";
+				for (int i =0; i< foldersInPath.length-1; i++){
+					jarPath += foldersInPath[i] + f.separator;
+				}
+				// did this because the splitting of the path removes the separator at the beginning if it exist.
+				if(filebeginningHasSeparator){
+					jarPath = f.separator + jarPath;
+				}
+				outPutDirectory = jarPath;
+			}
+			
+		}
+		
+		result = addDirectorySlash(outPutDirectory, separator);
+		return result;
 	}
 	
 	

@@ -8,9 +8,9 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 
-import uk.ac.ucl.cs.radar.userinterface.InputValidator;
 import uk.ac.ucl.cs.radar.utilities.Config;
 import uk.ac.ucl.cs.radar.utilities.Helper;
+import uk.ac.ucl.cs.radar.utilities.InputValidator;
 
 public class SyntheticModelGenerator {
 

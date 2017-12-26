@@ -71,7 +71,7 @@ import com.orsoncharts.renderer.xyz.ScatterXYZRenderer;
 /**
  * Scatter plot demo chart configuration.
  */
-public class ScatterPlot3D extends JFrame {
+public class ScatterPlotJFrame3D extends JFrame {
 
     /**
      * Creates a scatter chart based on the supplied dataset.
@@ -85,7 +85,11 @@ public class ScatterPlot3D extends JFrame {
     	String chartTitle =   "Pareto front obtained for " + semanticModel.getModelName() + " model." ;
 		String Xlabel =   semanticModel.getObjectives().get(0).getLabel();
 		String Ylabel =   semanticModel.getObjectives().get(1).getLabel();
-		String Zlabel =   semanticModel.getObjectives().get(2).getLabel();
+		String Zlabel = "Nbr of Constraints";
+		if (semanticModel.getObjectives().size() >2){
+			 Zlabel =   semanticModel.getObjectives().get(2).getLabel();
+		}
+		
 		
 
     	
@@ -130,7 +134,7 @@ public class ScatterPlot3D extends JFrame {
         for (int i =0; i < analysis_result.getShortListObjectives().size(); i ++){
         	x_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[0]);
         	y_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[1]);
-        	z_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[1]);
+        	z_nonDom = (float) (analysis_result.getShortListObjectives().get(i)[2]);
         	a_nonDom = (float)Math.random();
             s.add(x_nonDom, y_nonDom, z_nonDom);
 		}
@@ -145,7 +149,7 @@ public class ScatterPlot3D extends JFrame {
         for (int i =0; i < analysis_result.getEvaluatedObjectives().size(); i ++){
         	x_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[0]);
         	y_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[1]);
-        	z_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[1]);
+        	z_dom = (float) (analysis_result.getEvaluatedObjectives().get(i)[2]);
         	a_dom = (float)Math.random();
             s.add(x_dom, y_dom, z_dom);
 		}

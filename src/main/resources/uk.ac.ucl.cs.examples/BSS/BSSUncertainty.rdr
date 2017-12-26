@@ -1,0 +1,197 @@
+Model BSS;
+
+Objective Max ExpectedCustomerSatisfaction = EV(CustomerSatisfaction);
+Objective Max ExpectedBikeSecurity = EV(SystemSecurity);
+Objective Max ExpectedCapacity = EV(Capacity);
+Objective Min Risk = Pr(RiskExceedingBudget);
+	
+RiskExceedingBudget = Cost > Budget;
+
+Budget = normalCI (50000,100000);
+CustomerSatisfaction = SatisfactionFromSecuringBicycles
+ 			+ SatisfactionAboutDockStations 
+ 			+ SatisfactionAboutSystemAccessMgt
+ 			+ SatistactionAboutSystemRegistrationMgt
+ 			+ SatisfactionAboutNonMandatorySystemComponents;
+
+SatisfactionFromSecuringBicycles = decision-subset (+)("Securing Bicycles"){
+ 	"Localisation feature" : SatisfactionAboutBikeLocalisation;
+ 	"Anti-theft feature" : triangular (2,5,10); 
+}
+SatisfactionAboutBikeLocalisation =  decision-subset (+)("Tracking Mechanism"){
+ 	"GPS feature" : triangular (5,10, 15);
+ 	"RFID feature" : triangular (10, 15, 20); 
+}
+SatisfactionAboutDockStations =  decision ("Dock Station"){
+ 	"Permanently Fixed" : triangular (15,17, 19);
+ 	"Temporarily Fixed " : triangular (18,20,22);
+ 	"Flexible " : triangular (20,23,25); 
+}
+SatisfactionAboutSystemAccessMgt = decision-subset (+)("System Access Mgt"){
+ 	"Smart card" : triangular (20,25, 30);
+ 	"Smart Phone" : triangular (15, 20,25); 
+ 	"Key Card" : triangular (25, 30,35);
+}
+SatistactionAboutSystemRegistrationMgt = decision-subset (+)("System Registration Mgt"){
+ 	"Kisok Reg" : SatisfactionOfKioskReg;
+ 	"Dock Station Reg" : triangular (18, 20,22); 
+ 	"Web Reg" : triangular (27, 30,33);
+}
+SatisfactionOfKioskReg = decision-subset (+)("Kisok Reg"){
+ 	"Touch Screen" :  triangular (2, 5, 7);
+ 	"Key card reader" : triangular (8, 10,12); 
+ 	"Credit Card" : triangular (10, 12,15);
+ 	"Card Dispenser" : triangular (12, 15, 18);
+}
+SatisfactionAboutNonMandatorySystemComp = decision-subset (+)("NonMandatorySystemComp"){
+ 	"System Status Info" : SatisfactionOfHavingSysStatusInfo;
+ 	"Bike Maintenance" : triangular (12,15, 20); 
+ 	"Bike Redistribution" :  SatisfactionFromBikeRedistribution;
+}
+SatisfactionOfHavingSysStatusInfo = decision-subset (+)("System Status"){
+ 	"Real Time Web Info" : triangular (5,10, 15);
+ 	"Real Time Mobile App Info" : triangular (15, 20, 30); 
+}
+SatisfactionFromBikeRedistribution = RedistributionSatisfactionWithoutReward
+                    + SatisfactionForRewardingUsers;
+RedistributionSatisfactionWithoutReward =  triangular (10,15, 20); 
+SatisfactionForRewardingUsers = decision ("Reward Users"){
+ 	"Without reward" : deterministic (0);
+ 	"With Reward" : triangular (25, 28, 30); 
+}
+   
+
+// Model System Security
+SystemSecurity = decision-subset(+) ("Security"){
+	"System Status" : SystemStatusImpactOnSecurity;
+	"Bike Security" :  ImpactOfBikeSecurity ;
+	"Access Security" : ImpactOfAccessSecurity;
+}
+
+SystemStatusImpactOnSecurity = decision-subset(+)("System Status"){
+	"Real Time Web Info" : deterministic(2);
+	"Real Time Mobile App Info" : deterministic(5); 
+}
+
+//location and antitheses strategies..
+
+ImpactOfBikeSecurity  = decision-subset(+)("Securing Bicycles"){
+	"Localisation feature" : Security_Localisation;
+	"Anti-theft feature" : deterministic (4);
+}
+
+Security_Localisation = decision-subset(+)("Tracking Mechanism"){
+	"GPS feature" : deterministic(10);
+	"RFID feature" : deterministic (15);
+}
+
+
+ImpactOfAccessSecurity = Security_AccessManagementSystem + Security_UserRegistration;
+
+Security_AccessManagementSystem = decision-subset (+)("System Access Mgt"){
+	"Smart card" : deterministic (1);
+	"Smart Phone" : deterministic (2);
+	"Key Card" : deterministic (3); 
+}
+
+Security_UserRegistration = decision-subset (+)("System Registration Mgt"){
+	"Kisok Reg" : Security_KioskUserRegistration;
+	"Dock Station Reg" : deterministic (1);
+	"Web Reg" : deterministic (5); 
+}
+
+Security_KioskUserRegistration = decision-subset (+)("Kisok Reg"){
+	"Touch Screen" : deterministic(2);
+	"Key card reader" : deterministic(3);
+	"Credit Card" : deterministic(4);
+	"Card Dispenser" : deterministic(1);
+}
+
+   
+// Model Dock station capacity
+Capacity =  decision("Dock Station"){
+	"Fixed" : triangular (25, 30,35);
+	"Fixed Portable" : triangular (30, 35, 40);
+	"Flexible" : triangular (35, 40, 45);
+}
+
+  
+// Modelling the cost
+Cost = CostOfBicycles
+			+ CostOfSecuringBicycles
+ 			+ CostOfDockStations 
+ 			+ CostOfSystemAccessMgt
+ 			+ CostSystemRegistrationMgt
+ 			+ CostOfNonMandatorySystemComponents;
+
+
+CostOfBicycles = (NbrBikesToDeploy - NbrBikesCurrentlyDeployed) * UnitCost;
+NbrOfBicyclesCurrentlyDeployed =  deterministic (500);
+NbrBicyclesToDeploy = triangular (500, 700, 1000);
+UnitCost = decision ("Bicycle Manufacturer Brand"){
+	"A-Bike": normalCI (80 ,150);
+	"Cortina Cycles": normalCI (100 ,150);
+	"Derby Cycle": normalCI (150, 200);
+	"Bianchi" : normalCI (60 ,120);
+	"Catrike" : normalCI (200 ,250);
+}
+
+CostOfSecuringBicycles = decision-subset (+)("Securing Bicycles"){
+ 	"Localisation feature" : CostOfBikeLocalisation;
+ 	"Anti-theft feature" : triangular (5,7,10); 
+}
+
+CostOfBikeLocalisation =  decision-subset (+)("Tracking Mechanism"){
+ 	"GPS feature" : triangular (5,10, 15);
+ 	"RFID feature" : triangular (10, 15, 20); 
+}
+
+CostOfDockStations =  decision ("Dock Station"){
+ 	"Permanently Fixed" : triangular (25,30, 35);
+ 	"Temporarily Fixed " : triangular (30,35,40);
+ 	"Flexible " : triangular (30,40,50); 
+}
+CostOfSystemAccessMgt = decision-subset (+)("System Access Mgt"){
+ 	"Smart card" : triangular (30,35, 40);
+ 	"Smart Phone" : triangular (25, 30,35); 
+ 	"Key Card" : triangular (35, 40,45);
+}
+CostSystemRegistrationMgt = decision-subset (+)("System Registration Mgt"){
+ 	"Kisok Reg" : CostOfKioskReg;
+ 	"Dock Station Reg" : triangular (28, 30,32); 
+ 	"Web Reg" : triangular (30, 40,50);
+}
+CostOfKioskReg = decision-subset (+)("Kisok Reg"){
+ 	"Touch Screen" :  triangular (10, 15, 20);
+ 	"Key card reader" : triangular (15, 20,25); 
+ 	"Credit Card" : triangular (20, 22,25);
+ 	"Card Dispenser" : triangular (20, 25, 30);
+}
+CostOfNonMandatorySystemComponents = decision-subset (+)("NonMandatorySystemComp"){
+ 	"System Status Info" : CostOfHavingSysStatusInfo;
+ 	"Bike Maintenance" : triangular (8,10, 12); 
+ 	"Bike Redistribution" :  CostFromBikeRedistribution;
+}
+CostOfHavingSysStatusInfo = decision-subset (+)("System Status"){
+ 	"Real Time Web Info" : triangular (35,40, 55);
+ 	"Real Time Mobile App Info" : triangular (50, 80, 100); 
+}
+CostFromBikeRedistribution = RedistributionCostWithoutReward
+                    		+ CostForRewardingUsers;
+
+RedistributionCostWithoutReward =  normalCI(8, 10); 
+CostForRewardingUsers = decision ("Reward Users"){
+ 	"Without reward" : deterministic (0);
+ 	"With Reward" : deterministic (10); 
+}
+   
+
+
+
+
+
+Constraint "System Status": "RT Mobile App Info" requires "Tracking Mechanism": "GPS";
+Constraint "Bicycles" : "Anti-theft feature" requires "Tracking Mechanism": "GPS";
+Constraint "Kiosk Reg" : "Card Dispenser" requires "System Access Mgt": "Key Card";
+Constraint "System Access Mgt" : "Key Card" requires "Kiosk Reg" : "Key card reader";
+Constraint  "System Access Mgt" : "Key Card" requires "Kiosk Reg" : "Card Dispenser";

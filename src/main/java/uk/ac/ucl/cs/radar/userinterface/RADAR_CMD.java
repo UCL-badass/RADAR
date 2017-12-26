@@ -4,9 +4,10 @@ import uk.ac.ucl.cs.radar.model.AnalysisResult;
 import uk.ac.ucl.cs.radar.model.Model;
 import uk.ac.ucl.cs.radar.model.ModelSolver;
 import uk.ac.ucl.cs.radar.model.Parser;
-import uk.ac.ucl.cs.radar.model.ScatterPlot3D;
-import uk.ac.ucl.cs.radar.model.TwoDPlotter;
+import uk.ac.ucl.cs.radar.model.ScatterPlotJFrame3D;
+import uk.ac.ucl.cs.radar.model.TwoDJFramePlotter;
 import uk.ac.ucl.cs.radar.utilities.Helper;
+import uk.ac.ucl.cs.radar.utilities.InputValidator;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -128,10 +129,10 @@ public class RADAR_CMD {
 			
     		if (pareto == true){
     			if (result.getShortListObjectives().get(0).length == 2){
-					TwoDPlotter twoDPlot = new TwoDPlotter();
+					TwoDJFramePlotter twoDPlot = new TwoDJFramePlotter();
 					twoDPlot.plot(semanticModel,modelResultPath, result);
 				}else if (result.getShortListObjectives().get(0).length == 3){
-					ScatterPlot3D sc3D= new ScatterPlot3D( );
+					ScatterPlotJFrame3D sc3D= new ScatterPlotJFrame3D( );
 					sc3D.plot(semanticModel, modelResultPath, result);;
 ;				}
     		}

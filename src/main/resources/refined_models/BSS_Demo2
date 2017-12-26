@@ -1,0 +1,65 @@
+Model BSS;
+
+Objective Max ExpectedNetBenefit = EV(NB);
+Objective Min Risk = Pr(NB <0);
+	
+NB = Benefit - Cost;
+
+Benefit = BenefitOfSecuringBicycles;
+
+BenefitOfSecuringBicycles = decision-subset (+)("Bike Security"){
+ 	"Localisation feature" : BenefitOfBikeLocalisation;
+ 	"Anti-theft feature" : triangular (2,5,10); 
+}
+BenefitOfBikeLocalisation =  decision-subset (+)("Tracking Mechanism"){
+ 	"GPS feature" : triangular (5,10, 15);
+ 	"RFID feature" : triangular (20, 22, 25); 
+}
+  
+  
+// Modelling the cost   
+Cost = CostOfBikes  
+			+ CostOfSecuringBicycles
+			+ CostOfSystemAccessMgt
+ 			+ CostSystemRegistrationMgt;
+
+
+CostOfBikes = (NbrBikesToDeploy - NbrOfBikesCurrentlyDeployed) * UnitCost;
+NbrBikesToDeploy = triangular (500, 550, 600);
+NbrOfBikesCurrentlyDeployed =  deterministic (500);
+UnitCost = decision ("Bike Manufacturer Brand"){
+	"Cortina Cycles": normalCI (100* 10^-6 ,150* 10^-6);
+	"Derby Cycle": normalCI (140* 10^-6, 200* 10^-6);
+	"Bianchi" : normalCI (200 * 10^-6,300* 10^-6);
+	"A-Bike": normalCI (80 * 10^-6 ,100* 10^-6);
+	"Catrike" : normalCI (250* 10^-6 ,350* 10^-6);
+}
+CostOfSecuringBicycles = decision-subset (+)("Bike Security"){
+ 	"Localisation feature" : CostOfBikeLocalisation;
+ 	"Anti-theft feature" : normalCI (1,5); 
+}
+CostOfBikeLocalisation =  decision-subset (+)("Tracking Mechanism"){
+ 	"GPS feature" : normalCI (5,10);
+ 	"RFID feature" : normalCI (2, 7); 
+}
+CostOfSystemAccessMgt = decision-subset (+)("System Access Mgt"){
+ 	"Smart card" : triangular (30,35, 40);
+ 	"Smart Phone" : triangular (25, 30,35); 
+ 	"Key Card" : triangular (35, 40,45);
+}
+CostSystemRegistrationMgt = decision-subset (+)("System Registration Mgt"){
+ 	"Kiosk Reg" : CostOfKioskReg;
+ 	"Dock Station Reg" : triangular (28, 30,32); 
+ 	"Web Reg" : triangular (30, 40,50);
+}
+CostOfKioskReg = decision-subset (+)("Kiosk Registration Method"){
+ 	"Touch Screen" :  triangular (10, 15, 20);
+ 	"Key card reader" : triangular (15, 20,25); 
+ 	"Credit Card" : triangular (20, 22,25);
+ 	"Card Dispenser" : triangular (20, 25, 30);
+}
+
+Constraint "Kiosk Registration Method" : "Card Dispenser" couples "System Access Mgt": "Key Card";
+Constraint "System Access Mgt" : "Key Card" requires "Kiosk Registration Method" : "Key card reader";
+Constraint "Bike Manufacturer Brand" : "A-Bike" excludes "Tracking Mechanism": "GPS feature";
+Constraint "Bike Security" : "Anti-theft feature" requires "Tracking Mechanism": "GPS feature";

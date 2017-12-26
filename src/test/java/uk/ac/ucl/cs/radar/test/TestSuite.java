@@ -228,12 +228,14 @@ public class TestSuite {
 		d.setDecisionLabel("D");
 		d.setOptions(options);
 
-		Map<Decision, String> m3 = new LinkedHashMap<Decision, String>();
-		m3.put(d, "X");
+		Map<Decision, List<String>> m3 = new LinkedHashMap<Decision, List<String>>();
+		List<String> x = new ArrayList<>();
+		x.add("X");
+		m3.put(d, x);
 		Solution s3 = new Solution(m3);
 
-		Map<Decision, String> m4 = new LinkedHashMap<Decision, String>();
-		m4.put(d, "X");
+		Map<Decision, List<String>> m4 = new LinkedHashMap<Decision, List<String>>();
+		m4.put(d, x);
 		Solution s4 = new Solution(m4);
 		assertEquals( s3,s4);
 	}
@@ -247,13 +249,15 @@ public class TestSuite {
 		Decision d = new Decision();
 		d.setDecisionLabel("D");
 		d.setOptions(options);
-
-		Map<Decision, String> m3 = new LinkedHashMap<Decision, String>();
-		m3.put(d, "X");
+		List<String> x = new ArrayList<>();
+		x.add("X");
+		
+		Map<Decision, List<String>> m3 = new LinkedHashMap<Decision, List<String>>();
+		m3.put(d, x);
 		Solution s3 = new Solution(m3);
 
-		Map<Decision, String> m4 = new LinkedHashMap<Decision, String>();
-		m4.put(d, "X");
+		Map<Decision, List<String>> m4 = new LinkedHashMap<Decision, List<String>>();
+		m4.put(d, x);
 		Solution s4 = new Solution(m4);
 		
 		SolutionSet slns = new SolutionSet();

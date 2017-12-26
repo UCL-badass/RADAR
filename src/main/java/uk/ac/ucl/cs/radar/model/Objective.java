@@ -1,9 +1,10 @@
 package uk.ac.ucl.cs.radar.model;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import uk.ac.ucl.cs.radar.model.Model;
+import uk.ac.ucl.cs.radar.model.QualityVariable;
+import uk.ac.ucl.cs.radar.model.SolutionSet;
 import uk.ac.ucl.cs.radar.exception.CyclicDependencyException;
 /**
  * @author Saheed Busari and Emmanuel Letier
@@ -137,18 +138,30 @@ public  class Objective implements ModelVisitorElement {
 	 * @param m semantic model obtained through parsing.
 	 * @return all solutions for an objective instance.
 	 */
-	public SolutionSet getAllSolutions(Model m){
+	/*public SolutionSet getAllSolutions(Model m){
 		QualityVariable var = this.getQualityVariable();
 		return var.getAllSolutions(m);
+	}*/
+	public SolutionSet getAllSolutions(Model m){
+		SolutionSet result = new SolutionSet();
+		QualityVariable var = this.getQualityVariable();
+		if(var != null){ // Added this check bcos of the third implicit objective
+			return var.getAllSolutions(m);
+		}
+		return result;
 	}
 	/**
 	 * Traverses the model recursively from a quality variable objective refers to and to the leaf quality variables of the model to check for cyclic dependencies between quality variables.
 	 * @param m semantic model obtained from parsing.
 	 * @throws CyclicDependencyException if there exist a cyclic dependency between quality variables.
 	 */
-	public void getCyclicDependentVariables(Model m) throws CyclicDependencyException{
+	/*public void getCyclicDependentVariables(Model m) throws CyclicDependencyException{
 		QualityVariable var = this.getQualityVariable();
 		var.getCyclicDependentVariables(m);
+	}*/
+	public void getCyclicDependentVariables(Model m) throws CyclicDependencyException{
+		QualityVariable var = this.getQualityVariable();
+		if(var != null) var.getCyclicDependentVariables(m); // added this check because of the third implicit objective that has null QV.
 	}
 	/**
 	 * Visits the quality variable an objective refers to and generate the variable dependency graph.
