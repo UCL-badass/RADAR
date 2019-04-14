@@ -14,11 +14,15 @@ You can find details about RADAR on the [project webpage](https://ucl-badass.git
 
 The modelling language and decision analysis support tool are described in the following paper which has been accepted for publication at ICSE17:
 
-[Saheed A. Busari](http://www0.cs.ucl.ac.uk/staff/S.Busari/) and [Emmanuel Letier](http://letier.cs.ucl.ac.uk/): ["RADAR: A Lightwight Tool for Requirements and Architecture Decision Analysis"](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/radar_icse17.pdf), to appear in ICSE17, Buenos Aires, Argentina.
+[Saheed A. Busari](https://scholar.google.co.uk/citations?user=QDyD0qAAAAAJ&hl=en&oi=ao) and [Emmanuel Letier](http://letier.cs.ucl.ac.uk/): ["RADAR: A Lightwight Tool for Requirements and Architecture Decision Analysis"](http://www0.cs.ucl.ac.uk/staff/S.Busari/RADAR/radar_icse17.pdf), published and presented in International Conference on Software Engineering (ICSE) 2017, Buenos Aires, Argentina.
+
+[Saheed A. Busari](https://scholar.google.co.uk/citations?user=QDyD0qAAAAAJ&hl=en&oi=ao): ["Towards search-based modelling and analysis of requirements and architecture decisions"](https://ieeexplore.ieee.org/abstract/document/8115725), published and presented in International Conference on Automated Software Engineering (ASE) 2017, Urbana Chmapaign, Illinois, United States of America.
+
+[Saheed A. Busari](https://scholar.google.co.uk/citations?user=QDyD0qAAAAAJ&hl=en&oi=ao): ["Modelling and Analysing Software Requirements and Architecture Decisions under Uncertainty"](http://discovery.ucl.ac.uk/10067421/1/Sab_Thesis_Accepted_070219.pdf), PhD Thesis.
 
 The scalability analysis of RADAR desision support tool is described in the paper below:
 
-[Saheed A. Busari](http://www0.cs.ucl.ac.uk/staff/S.Busari/) and [Emmanuel Letier](http://letier.cs.ucl.ac.uk/): ["Scalability Analysis of the RADAR Decision Support Tool"](https://arxiv.org/pdf/1702.02977.pdf).
+[Saheed A. Busari](https://scholar.google.co.uk/citations?user=QDyD0qAAAAAJ&hl=en&oi=ao) and [Emmanuel Letier](http://letier.cs.ucl.ac.uk/): ["Scalability Analysis of the RADAR Decision Support Tool"](https://arxiv.org/pdf/1702.02977.pdf).
 
 
 <!---
