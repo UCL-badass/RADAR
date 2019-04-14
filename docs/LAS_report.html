@@ -194,7 +194,7 @@ the allocation time has an exponenttial distribution with mean time of 20 second
 <p> The Mobilisation Communication Time depends on the <em>mobilisation communication method</em>; If the current radio-based method is used, then the mobilisation communication time follows a triangular distribution with a lower and upper bounds of 45 and 90 seconds respectively, and a most likely time of 60 seconds; If a mobile data terminal system of a specific model type A is used, then 
 the allocation time has a triangualar distribution with a lower and upper bounds of 20 and 40 seconds respectively, and a most likely time of 30 seconds; if a different mobile data terminal system of another model type B is used, then the mobilisation communication time has a triangular distribution with a lower and upper bounds of 10 and 20 seconds respectively, and a most likely time of 15 seconds.  </p>
 
-<pre><code>AmbulanceAllocationTime = decision(&quot;Mobilisation Communication Method&quot;){
+<pre><code>MobilisationCommunicationTime = decision(&quot;Mobilisation Communication Method&quot;){
     &quot;Current Radio-Based&quot;:triangular(45, 60, 90);
     &quot;MDT-System A&quot;:triangular(20, 30, 40);
     &quot;MDT-System B&quot;:triangular(10, 15, 20);
