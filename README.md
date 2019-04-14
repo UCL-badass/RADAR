@@ -112,13 +112,5 @@ The following are the libraries to be added to your project as Maven dependencie
   - jfreechart-1.0.19.lar and jcommon-1.0.23.jar for generating 2D plots 
   - orsoncharts-1.5.jar for generating 3D plots.
 
-# Roadmap
-
-Radar is an early prototype that we are constantly improving. Our current development goals include:
-  - Applying RADAR to additional examples.
-  - Extending the language to support decisions with non-mutually exclusive options, constraints between options of different decisions.
-  - Provide fully documented API for use of Radar by external tools.
-  - Facilitating generation of decision analysis report by embedding RADAR model fragments and analysis results within markdown documents.
-
 For any question, email: {saheed.busari.13, e.letier}@ucl.ac.uk
 
