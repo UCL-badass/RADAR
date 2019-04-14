@@ -1567,7 +1567,7 @@ public class RADAR_GUI2 implements PropertyChangeListener {
 		}
 	}
 	void initialiseDefaultSbseParameters (){
-		useSbse = true;
+		useSbse = false;
 		sbseParameter = new SbseParameter();
 		sbseParameter.setAlgorithmName("NSGAII");
 		sbseParameter.setCrossOverProbability(0.8);
@@ -2353,7 +2353,7 @@ public class RADAR_GUI2 implements PropertyChangeListener {
 		);
 		
 		SbseSetting = new JPanel();
-		tabbedPane.addTab("Sbse Settings", null, SbseSetting, null);
+		//tabbedPane.addTab("Sbse Settings", null, SbseSetting, null);
 		
 		panelAlgorithm = new JPanel();
 		panelAlgorithm.setForeground(Color.BLACK);

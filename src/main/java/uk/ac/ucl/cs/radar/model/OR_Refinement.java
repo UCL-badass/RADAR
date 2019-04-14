@@ -54,8 +54,9 @@ public class OR_Refinement extends Expression {
 		AND_Refinement and_ref = definition.get(option);
 		return and_ref.simulate(s);
 	}*/
+	
 	/**
-	 * To be used for non-mutually exculusive selection
+	 * To be used for non-mutually exclusive selection
 	 * @param s
 	 * @return
 	 */

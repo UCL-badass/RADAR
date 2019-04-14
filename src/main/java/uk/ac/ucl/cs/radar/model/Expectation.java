@@ -32,7 +32,7 @@ class Expectation extends Statistic {
 	 * Evaluates a solution through monte-carlo simulation.
 	 * @param s a solution to be simulated through monte-carlo simulation.
 	 * @param var is a quality variable an objective refers to i.e a quality variable attached to an objective definition.
-	 * @return an simulated objective value.
+	 * @return a simulated objective value.
 	 */
 	@Override
 	double evaluate(Solution s, QualityVariable var) {

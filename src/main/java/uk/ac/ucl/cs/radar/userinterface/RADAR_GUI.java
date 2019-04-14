@@ -1501,7 +1501,7 @@ public class RADAR_GUI implements PropertyChangeListener {
 		outPutDirectory = RADAR_GUI.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		outPutDirectory = Helper.processJarLocationPath(outPutDirectory);
 		
-		useSbse = true;
+		useSbse = false;
 		sbseParameter = new SbseParameter();
 		sbseParameter.setAlgorithmName("NSGAII");
 		sbseParameter.setCrossOverProbability(0.9);
